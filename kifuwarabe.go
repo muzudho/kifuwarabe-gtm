@@ -5,8 +5,8 @@ import (
 	"math/rand"
 	"time"
 
-	c "github.com/muzudho/kifuwarabe-uec12/controller"
-	e "github.com/muzudho/kifuwarabe-uec12/entities"
+	c "github.com/muzudho/kifuwarabe-gtp/controller"
+	e "github.com/muzudho/kifuwarabe-gtp/entities"
 	"github.com/ziutek/telnet"
 )
 
@@ -26,7 +26,7 @@ func KifuwarabeV1() {
 		e.G.Chat.Trace("# SentinelBoardMax()=%d\n", config.SentinelBoardMax())
 	*/
 
-	board := e.NewBoardV9a(config.GetBoardArray(), config.BoardSize(), config.SentinelBoardMax(), config.Komi(), config.MaxMoves())
+	board := e.NewBoard(config.GetBoardArray(), config.BoardSize(), config.SentinelBoardMax(), config.Komi(), config.MaxMoves())
 	// presenter := p.NewPresenterV9a()
 
 	//e.G.Chat.Trace("# 盤を新規作成した☆（＾～＾）\n")

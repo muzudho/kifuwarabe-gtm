@@ -5,8 +5,8 @@ import (
 	"os"
 	"time"
 
-	e "github.com/muzudho/kifuwarabe-uec12/entities"
-	p "github.com/muzudho/kifuwarabe-uec12/presenter"
+	e "github.com/muzudho/kifuwarabe-gtp/entities"
+	p "github.com/muzudho/kifuwarabe-gtp/presenter"
 )
 
 // SelfplayV9 - コンピューター同士の対局。

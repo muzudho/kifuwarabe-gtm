@@ -34,7 +34,7 @@ c:\go
 ## Modules を使ったプロジェクトの作成
 
 ```shell
-go mod init github.com/muzudho/kifuwarabe-uec12
+go mod init github.com/muzudho/kifuwarabe-gtp
 ```
 
 ## Telnet

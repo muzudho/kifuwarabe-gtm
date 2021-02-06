@@ -19,8 +19,7 @@ type IBoard interface {
 	Exists(tIdx int) bool
 
 	// 石を置きます。
-	PutStoneType1(tIdx int, color int) int
-	PutStoneType2(tIdx int, color int, fillEyeErr int) int
+	PutStone(tIdx int, color int, fillEyeErr int) int
 
 	// Playout - 最後まで石を打ちます。
 	Playout(turnColor int, printBoardType1 func(IBoard)) int
@@ -195,8 +194,8 @@ func (board Board) GetEmptyTIdx() int {
 	return tIdx
 }
 
-// NewBoardV9a - 盤を作成します。
-func NewBoardV9a(data []int, boardSize int, sentinelBoardMax int, komi float64, maxMoves int) *Board {
+// NewBoard - 盤を作成します。
+func NewBoard(data []int, boardSize int, sentinelBoardMax int, komi float64, maxMoves int) *Board {
 	board := new(Board)
 	board.data = data
 	board.boardSize = boardSize
@@ -289,83 +288,8 @@ func (board *Board) InitBoard() {
 	// G.Chat.Trace("# (^q^) 盤の初期化は終わったぜ☆\n")
 }
 
-// PutStoneType1 - 石を置きます。
-func (board *Board) PutStoneType1(tIdx int, color int) int {
-	var around = [4][3]int{}
-	var liberty, stone int
-	unCol := FlipColor(color)
-	space := 0
-	wall := 0
-	mycolSafe := 0
-	captureSum := 0
-	koMaybe := 0
-
-	if tIdx == 0 {
-		KoIdx = 0
-		return 0
-	}
-	for dir := 0; dir < 4; dir++ {
-		around[dir][0] = 0
-		around[dir][1] = 0
-		around[dir][2] = 0
-		z := tIdx + Dir4[dir]
-		color2 := board.ColorAt(z)
-		if color2 == 0 {
-			space++
-		}
-		if color2 == 3 {
-			wall++
-		}
-		if color2 == 0 || color2 == 3 {
-			continue
-		}
-		board.CountLiberty(z, &liberty, &stone)
-		around[dir][0] = liberty
-		around[dir][1] = stone
-		around[dir][2] = color2
-		if color2 == unCol && liberty == 1 {
-			captureSum += stone
-			koMaybe = z
-		}
-		if color2 == color && liberty >= 2 {
-			mycolSafe++
-		}
-
-	}
-	if captureSum == 0 && space == 0 && mycolSafe == 0 {
-		return 1
-	}
-	if tIdx == KoIdx {
-		return 2
-	}
-	if wall+mycolSafe == 4 {
-		return 3
-	}
-	if board.Exists(tIdx) {
-		return 4
-	}
-
-	for dir := 0; dir < 4; dir++ {
-		lib := around[dir][0]
-		color2 := around[dir][2]
-		if color2 == unCol && lib == 1 && board.Exists(tIdx+Dir4[dir]) {
-			board.TakeStone(tIdx+Dir4[dir], unCol)
-		}
-	}
-
-	board.SetColor(tIdx, color)
-
-	board.CountLiberty(tIdx, &liberty, &stone)
-	if captureSum == 1 && stone == 1 && liberty == 1 {
-		KoIdx = koMaybe
-	} else {
-		KoIdx = 0
-	}
-	return 0
-}
-
-// PutStoneType2 - 石を置きます。
-func (board *Board) PutStoneType2(tIdx int, color int, fillEyeErr int) int {
+// PutStone - 石を置きます。
+func (board *Board) PutStone(tIdx int, color int, fillEyeErr int) int {
 	var around = [4][3]int{}
 	var liberty, stone int
 	unCol := FlipColor(color)
@@ -438,22 +362,6 @@ func (board *Board) PutStoneType2(tIdx int, color int, fillEyeErr int) int {
 		KoIdx = 0
 	}
 	return 0
-}
-
-// PlayOneMove - 置けるとこに置く。
-func (board *Board) PlayOneMove(color int) int {
-	for i := 0; i < 100; i++ {
-		tIdx := board.GetEmptyTIdx()
-		err := board.PutStoneType1(tIdx, color)
-		if err == 0 {
-			return tIdx
-		}
-	}
-
-	// 0 はパス。
-	const tIdx = 0
-	board.PutStoneType1(tIdx, color)
-	return tIdx
 }
 
 func countScoreV7(board IBoard, turnColor int) int {
@@ -531,7 +439,7 @@ func (board *Board) Playout(turnColor int, printBoardType1 func(IBoard)) int {
 				r = rand.Intn(emptyNum)
 				tIdx = empty[r]
 			}
-			err := board.PutStoneType2(tIdx, color, FillEyeErr)
+			err := board.PutStone(tIdx, color, FillEyeErr)
 			if err == 0 {
 				break
 			}
@@ -570,7 +478,7 @@ func (board *Board) PrimitiveMonteCalro(color int, printBoardType1 func(IBoard))
 			if board.Exists(z) {
 				continue
 			}
-			err := board.PutStoneType2(z, color, FillEyeErr)
+			err := board.PutStone(z, color, FillEyeErr)
 			if err != 0 {
 				continue
 			}
@@ -601,7 +509,7 @@ func (board *Board) PrimitiveMonteCalro(color int, printBoardType1 func(IBoard))
 
 // AddMovesType1 - GoGoV8, SelfplayV9 から呼び出されます。
 func (board *Board) AddMovesType1(tIdx int, color int, printBoardType2 func(IBoard, int)) {
-	err := board.PutStoneType2(tIdx, color, FillEyeOk)
+	err := board.PutStone(tIdx, color, FillEyeOk)
 	if err != 0 {
 		fmt.Println("(AddMovesV8) Err!", err)
 		os.Exit(0)
@@ -613,7 +521,7 @@ func (board *Board) AddMovesType1(tIdx int, color int, printBoardType2 func(IBoa
 
 // AddMovesType2 - 指し手の追加？
 func (board *Board) AddMovesType2(tIdx int, color int, sec float64, printBoardType2 func(IBoard, int)) {
-	err := board.PutStoneType2(tIdx, color, FillEyeOk)
+	err := board.PutStone(tIdx, color, FillEyeOk)
 	if err != 0 {
 		fmt.Fprintf(os.Stderr, "(addMoves9a) Err!\n")
 		os.Exit(0)

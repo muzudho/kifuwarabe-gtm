@@ -11,10 +11,10 @@ import (
 	"strings"
 	"time"
 
-	c "github.com/muzudho/kifuwarabe-uec12/controller"
-	e "github.com/muzudho/kifuwarabe-uec12/entities"
-	p "github.com/muzudho/kifuwarabe-uec12/presenter"
-	u "github.com/muzudho/kifuwarabe-uec12/usecases"
+	c "github.com/muzudho/kifuwarabe-gtp/controller"
+	e "github.com/muzudho/kifuwarabe-gtp/entities"
+	p "github.com/muzudho/kifuwarabe-gtp/presenter"
+	u "github.com/muzudho/kifuwarabe-gtp/usecases"
 )
 
 func main() {
@@ -60,7 +60,7 @@ func GoGoV9a() {
 	e.G.Chat.Trace("# BoardData=%s\n", config.Game.BoardData)
 	e.G.Chat.Trace("# SentinelBoardMax()=%d\n", config.SentinelBoardMax())
 
-	board := e.NewBoardV9a(config.GetBoardArray(), config.BoardSize(), config.SentinelBoardMax(), config.Komi(), config.MaxMoves())
+	board := e.NewBoard(config.GetBoardArray(), config.BoardSize(), config.SentinelBoardMax(), config.Komi(), config.MaxMoves())
 
 	e.G.Chat.Trace("# board.BoardSize()=%d\n", board.BoardSize())
 	e.G.Chat.Trace("# board.SentinelBoardMax()=%d\n", board.SentinelBoardMax())
