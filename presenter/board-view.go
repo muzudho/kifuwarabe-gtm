@@ -150,7 +150,7 @@ func PrintSgf(board e.IBoard, moves int, record []int) {
 	fmt.Printf(")\n")
 }
 
-// GetCharZ - YX座標の文字表示？
+// GetCharZ - YX座標の文字表示？ A1 とか
 func GetCharZ(board e.IBoard, z int) string {
 	if z == 0 {
 		return "pass"
