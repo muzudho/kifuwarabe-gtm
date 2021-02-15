@@ -79,7 +79,7 @@ func LoadGameConf(path string) Config {
 	// ファイル読込
 	fileData, err := ioutil.ReadFile(path)
 	if err != nil {
-		e.G.Chat.Fatal("path=%s", path)
+		e.G.Log.Fatal("path=%s", path)
 		panic(err)
 	}
 	// fmt.Print(string(fileData))

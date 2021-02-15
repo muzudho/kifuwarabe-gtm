@@ -36,7 +36,7 @@ func main() {
 	e.G.Chat = *e.NewChatter(e.G.Log)
 
 	// 標準出力への表示と、ログへの書き込みを同時に行います。
-	e.G.Chat.Trace("Author: %s\n", e.Author)
+	e.G.Log.Trace("Author: %s\n", e.Author)
 
 	GoGoV9a() // GTP
 	//KifuwarabeV1()
@@ -45,33 +45,33 @@ func main() {
 // GoGoV9a - バージョン９a。
 // GTP2NNGS に対応しているのでは？
 func GoGoV9a() {
-	e.G.Chat.Trace("# GoGo v9a プログラム開始☆（＾～＾）\n")
+	e.G.Log.Trace("# GoGo v9a プログラム開始☆（＾～＾）\n")
 
 	config := c.LoadGameConf("input/example-v3.gameConf.toml")
 
-	e.G.Chat.Trace("# Config読んだ☆（＾～＾）\n")
-	e.G.Chat.Trace("# Server=%s\n", config.Nngs.Server)
-	e.G.Chat.Trace("# Port=%d\n", config.Nngs.Port)
-	e.G.Chat.Trace("# User=%s\n", config.Nngs.User)
-	e.G.Chat.Trace("# Pass=%s\n", config.Nngs.Pass)
-	e.G.Chat.Trace("# Komi=%f\n", config.Game.Komi)
-	e.G.Chat.Trace("# BoardSize=%d\n", config.Game.BoardSize)
-	e.G.Chat.Trace("# MaxMoves=%d\n", config.Game.MaxMoves)
-	e.G.Chat.Trace("# BoardData=%s\n", config.Game.BoardData)
-	e.G.Chat.Trace("# SentinelBoardMax()=%d\n", config.SentinelBoardMax())
+	e.G.Log.Trace("# Config読んだ☆（＾～＾）\n")
+	e.G.Log.Trace("# Server=%s\n", config.Nngs.Server)
+	e.G.Log.Trace("# Port=%d\n", config.Nngs.Port)
+	e.G.Log.Trace("# User=%s\n", config.Nngs.User)
+	e.G.Log.Trace("# Pass=%s\n", config.Nngs.Pass)
+	e.G.Log.Trace("# Komi=%f\n", config.Game.Komi)
+	e.G.Log.Trace("# BoardSize=%d\n", config.Game.BoardSize)
+	e.G.Log.Trace("# MaxMoves=%d\n", config.Game.MaxMoves)
+	e.G.Log.Trace("# BoardData=%s\n", config.Game.BoardData)
+	e.G.Log.Trace("# SentinelBoardMax()=%d\n", config.SentinelBoardMax())
 
 	board := e.NewBoard(config.GetBoardArray(), config.BoardSize(), config.SentinelBoardMax(), config.Komi(), config.MaxMoves())
 
-	e.G.Chat.Trace("# board.BoardSize()=%d\n", board.BoardSize())
-	e.G.Chat.Trace("# board.SentinelBoardMax()=%d\n", board.SentinelBoardMax())
-	// e.G.Chat.Trace("# board.GetData()=", board.GetData())
+	e.G.Log.Trace("# board.BoardSize()=%d\n", board.BoardSize())
+	e.G.Log.Trace("# board.SentinelBoardMax()=%d\n", board.SentinelBoardMax())
+	// e.G.Log.Trace("# board.GetData()=", board.GetData())
 
 	presenter := p.NewPresenterV9a()
 
 	rand.Seed(time.Now().UnixNano())
 	board.InitBoard()
 
-	e.G.Chat.Trace("何か標準入力しろだぜ☆（＾～＾）\n")
+	e.G.Log.Trace("何か標準入力しろだぜ☆（＾～＾）\n")
 
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
