@@ -51,7 +51,8 @@ func main() {
 func GoGoV9a() {
 	e.G.Log.Trace("# GoGo v9a プログラム開始☆（＾～＾）\n")
 
-	config := c.LoadGameConf("input/example-v3.gameConf.toml")
+	// TODO ファイルが存在しなければ、強制終了します。
+	config := c.LoadGameConf("input/gameConf.toml")
 
 	e.G.Log.Trace("# Config読んだ☆（＾～＾）\n")
 	e.G.Log.Trace("# Server=%s\n", config.Nngs.Server)
