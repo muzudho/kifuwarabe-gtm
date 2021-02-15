@@ -22,21 +22,25 @@ func main() {
 	e.G = *new(e.GlobalVariables)
 
 	// ロガーの作成。
+	// TODO ディレクトリが存在しなければ、強制終了します。
 	e.G.Log = *e.NewLogger(
-		"output/trace.log",
-		"output/debug.log",
-		"output/info.log",
-		"output/notice.log",
-		"output/warn.log",
-		"output/error.log",
-		"output/fatal.log",
-		"output/print.log")
+		"./output/trace.log",
+		"./output/debug.log",
+		"./output/info.log",
+		"./output/notice.log",
+		"./output/warn.log",
+		"./output/error.log",
+		"./output/fatal.log",
+		"./output/print.log")
 
 	// チャッターの作成。 標準出力とロガーを一緒にしただけです。
 	e.G.Chat = *e.NewChatter(e.G.Log)
 
-	// 標準出力への表示と、ログへの書き込みを同時に行います。
-	e.G.Log.Trace("Author: %s\n", e.Author)
+	// 応答してみるぜ（＾～＾）
+	fmt.Printf("Author: %s\n", e.Author)
+	fmt.Printf("This is a GTP engine.\n")
+	// e.G.Chat.Print("Author: %s\n", e.Author)
+	// e.G.Chat.Print("This is a GTP engine.\n")
 
 	GoGoV9a() // GTP
 	//KifuwarabeV1()
