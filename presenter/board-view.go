@@ -18,9 +18,13 @@ func NewPresenterV9a() *presenterV9a {
 }
 
 // labelOfColumns - 各列の表示符号。
+// I は欠番です。
+var labelOfColumns = [20]byte{'@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J',
+	'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'}
+
 // 文字が詰まってしまうので、１に似たギリシャ文字で隙間を空けています。
-var labelOfColumns = [20]string{"零", " 1", " 2", " 3", " 4", " 5", " 6", " 7", " 8", " 9",
-	"ι0", "ι1", "ι2", "ι3", "ι4", "ι5", "ι6", "ι7", "ι8", "ι9"}
+// var labelOfColumns = [20]string{"零", " 1", " 2", " 3", " 4", " 5", " 6", " 7", " 8", " 9",
+//	"ι0", "ι1", "ι2", "ι3", "ι4", "ι5", "ι6", "ι7", "ι8", "ι9"}
 
 // labelOfRowsV1 - 各行の表示符号。
 var labelOfRowsV1 = [20]string{"零", "一", "二", "三", "四", "五", "六", "七", "八", "九",
@@ -44,7 +48,7 @@ func (presenter *presenterV9a) PrintBoardType1(board e.IBoard) {
 
 	fmt.Printf("\n   ")
 	for x := 0; x < boardSize; x++ {
-		fmt.Printf("%s", labelOfColumns[x+1])
+		fmt.Printf(" %c", labelOfColumns[x+1])
 	}
 	fmt.Printf("\n  +")
 	for x := 0; x < boardSize; x++ {
@@ -71,7 +75,7 @@ func printBoardType2(board e.IBoard, moves int) {
 
 	fmt.Printf("\n   ")
 	for x := 0; x < boardSize; x++ {
-		fmt.Printf("%s", labelOfColumns[x+1])
+		fmt.Printf(" %c", labelOfColumns[x+1])
 	}
 	fmt.Printf("\n  +")
 	for x := 0; x < boardSize; x++ {
@@ -102,7 +106,7 @@ func (presenter *presenterV9a) PrintBoardType2(board e.IBoard, moves int) {
 
 	fmt.Fprintf(os.Stderr, "\n   ")
 	for x := 0; x < boardSize; x++ {
-		fmt.Fprintf(os.Stderr, "%s", labelOfColumns[x+1])
+		fmt.Fprintf(os.Stderr, " %c", labelOfColumns[x+1])
 	}
 	fmt.Fprintf(os.Stderr, "\n  +")
 	for x := 0; x < boardSize; x++ {
@@ -150,21 +154,19 @@ func PrintSgf(board e.IBoard, moves int, record []int) {
 	fmt.Printf(")\n")
 }
 
-// GetCharZ - YX座標の文字表示？ A1 とか
-func GetCharZ(board e.IBoard, z int) string {
-	if z == 0 {
+// GetPointName - YX座標の文字表示？ A1 とか
+func GetPointName(board e.IBoard, tIdx int) string {
+	if tIdx == 0 {
 		return "pass"
 	}
 
-	boardSize := board.BoardSize()
+	// boardSize := board.BoardSize()
 
-	y := z / board.SentinelWidth()
-	x := z - y*board.SentinelWidth()
-	ax := 'A' + x - 1
-	if ax >= 'I' {
-		ax++
-	}
+	y := tIdx / board.SentinelWidth()
+	x := tIdx - y*board.SentinelWidth()
 
-	//return string(ax) + string(BoardSize+1-y+'0')
-	return fmt.Sprintf("%d%d", ax, boardSize+1-y+'0')
+	ax := labelOfColumns[x]
+
+	//return string(ax) + string(boardSize+1-y+'0')
+	return fmt.Sprintf("%c%d", ax, y)
 }

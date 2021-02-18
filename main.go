@@ -110,8 +110,8 @@ func main() {
 			if 1 < len(tokens) && strings.ToLower(tokens[1]) == "w" {
 				color = 2
 			}
-			z := u.PlayComputerMoveV9a(board, color, 1, presenter.PrintBoardType1, presenter.PrintBoardType2)
-			e.G.Chat.Print("= %s\n\n", p.GetCharZ(board, z))
+			tIdx := u.PlayComputerMove(board, color, 1, presenter.PrintBoardType1, presenter.PrintBoardType2)
+			e.G.Chat.Print("= %s\n\n", p.GetPointName(board, tIdx))
 		// play b a3
 		// play w d4
 		// play b d5

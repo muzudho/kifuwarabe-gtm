@@ -1,6 +1,8 @@
 # kifuwarabe-gtm
 
-Computer go.
+Computer go.  
+
+Base: [https://github.com/bleu48/GoGo](https://github.com/bleu48/GoGo)  
 
 ## Documents
 
