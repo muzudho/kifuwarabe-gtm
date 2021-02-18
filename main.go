@@ -28,11 +28,12 @@ func main() {
 	fmt.Printf("[情報] wdir=%s\n", wdir)
 
 	// コマンドライン引数
-	workdir := flag.String("workdir", ".", "Working directory path.")
+	workdir := flag.String("workdir", wdir, "Working directory path.")
 	flag.Parse()
 	fmt.Printf("[情報] flag.Args()=%s\n", flag.Args())
 	fmt.Printf("[情報] workdir=%s\n", *workdir)
-	fmt.Printf("[情報] Join(wdir,workdir)=%s\n", filepath.Join(wdir, *workdir))
+	entryConfPath := filepath.Join(*workdir, "input/default.entryConf.toml")
+	fmt.Printf("[情報] entryConfPath=%s\n", entryConfPath)
 
 	// グローバル変数の作成
 	e.G = *new(e.GlobalVariables)
@@ -40,14 +41,14 @@ func main() {
 	// ロガーの作成。
 	// TODO ディレクトリが存在しなければ、強制終了します。
 	e.G.Log = *e.NewLogger(
-		"./output/trace.log",
-		"./output/debug.log",
-		"./output/info.log",
-		"./output/notice.log",
-		"./output/warn.log",
-		"./output/error.log",
-		"./output/fatal.log",
-		"./output/print.log")
+		filepath.Join(*workdir, "output/trace.log"),
+		filepath.Join(*workdir, "output/debug.log"),
+		filepath.Join(*workdir, "output/info.log"),
+		filepath.Join(*workdir, "output/notice.log"),
+		filepath.Join(*workdir, "output/warn.log"),
+		filepath.Join(*workdir, "output/error.log"),
+		filepath.Join(*workdir, "output/fatal.log"),
+		filepath.Join(*workdir, "output/print.log"))
 
 	// チャッターの作成。 標準出力とロガーを一緒にしただけです。
 	e.G.Chat = *e.NewChatter(e.G.Log)
@@ -61,7 +62,7 @@ func main() {
 	e.G.Log.Trace("# GoGo プログラム開始☆（＾～＾）\n")
 
 	// TODO ファイルが存在しなければ、強制終了します。
-	config := ui.LoadEntryConf("input/default.entryConf.toml")
+	config := ui.LoadEntryConf(entryConfPath) // "input/default.entryConf.toml"
 
 	board := e.NewBoard(config.GetBoardArray(), config.BoardSize(), config.SentinelBoardMax(), config.Komi(), config.MaxMoves())
 
