@@ -42,12 +42,6 @@ func main() {
 	// e.G.Chat.Print("Author: %s\n", e.Author)
 	// e.G.Chat.Print("This is a GTP engine.\n")
 
-	GoGo() // GTP
-	//KifuwarabeV1()
-}
-
-// GoGo - GTP2NNGS に対応しているのでは？
-func GoGo() {
 	e.G.Log.Trace("# GoGo プログラム開始☆（＾～＾）\n")
 
 	// TODO ファイルが存在しなければ、強制終了します。
