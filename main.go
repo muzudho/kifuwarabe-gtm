@@ -20,6 +20,7 @@ import (
 )
 
 func main() {
+	// Working directory
 	wdir, err := os.Getwd()
 	if err != nil {
 		panic(fmt.Sprintf("[情報] wdir=%s", wdir))
