@@ -11,7 +11,6 @@ import (
 	"strings"
 	"time"
 
-	c "github.com/muzudho/kifuwarabe-gtp/controller"
 	e "github.com/muzudho/kifuwarabe-gtp/entities"
 	p "github.com/muzudho/kifuwarabe-gtp/presenter"
 	u "github.com/muzudho/kifuwarabe-gtp/usecases"
@@ -52,7 +51,7 @@ func GoGoV9a() {
 	e.G.Log.Trace("# GoGo v9a プログラム開始☆（＾～＾）\n")
 
 	// TODO ファイルが存在しなければ、強制終了します。
-	config := c.LoadGameConf("input/gameConf.toml")
+	config := e.LoadGameConf("input/gameConf.toml")
 
 	e.G.Log.Trace("# Config読んだ☆（＾～＾）\n")
 	e.G.Log.Trace("# Server=%s\n", config.Nngs.Server)

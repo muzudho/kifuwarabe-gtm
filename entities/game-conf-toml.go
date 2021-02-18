@@ -1,11 +1,10 @@
-package controller
+package entities
 
 import (
 	"io/ioutil"
 	"strconv"
 	"strings"
 
-	e "github.com/muzudho/kifuwarabe-gtp/entities"
 	"github.com/pelletier/go-toml"
 )
 
@@ -79,7 +78,7 @@ func LoadGameConf(path string) Config {
 	// ファイル読込
 	fileData, err := ioutil.ReadFile(path)
 	if err != nil {
-		e.G.Log.Fatal("path=%s", path)
+		G.Log.Fatal("path=%s", path)
 		panic(err)
 	}
 	// fmt.Print(string(fileData))
