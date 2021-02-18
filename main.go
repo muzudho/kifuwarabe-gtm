@@ -5,9 +5,11 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"math/rand"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -18,6 +20,19 @@ import (
 )
 
 func main() {
+	wdir, err := os.Getwd()
+	if err != nil {
+		panic(fmt.Sprintf("[情報] wdir=%s", wdir))
+	}
+	fmt.Printf("[情報] wdir=%s\n", wdir)
+
+	// コマンドライン引数
+	workdir := flag.String("workdir", ".", "Working directory path.")
+	flag.Parse()
+	fmt.Printf("[情報] flag.Args()=%s\n", flag.Args())
+	fmt.Printf("[情報] workdir=%s\n", *workdir)
+	fmt.Printf("[情報] Join(wdir,workdir)=%s\n", filepath.Join(wdir, *workdir))
+
 	// グローバル変数の作成
 	e.G = *new(e.GlobalVariables)
 
