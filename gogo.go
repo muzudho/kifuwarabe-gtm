@@ -13,6 +13,7 @@ import (
 
 	e "github.com/muzudho/kifuwarabe-gtp/entities"
 	p "github.com/muzudho/kifuwarabe-gtp/presenter"
+	"github.com/muzudho/kifuwarabe-gtp/ui"
 	u "github.com/muzudho/kifuwarabe-gtp/usecases"
 )
 
@@ -51,7 +52,7 @@ func GoGoV9a() {
 	e.G.Log.Trace("# GoGo v9a プログラム開始☆（＾～＾）\n")
 
 	// TODO ファイルが存在しなければ、強制終了します。
-	config := e.LoadGameConf("input/gameConf.toml")
+	config := ui.LoadEntryConf("input/default.entryConf.toml")
 
 	e.G.Log.Trace("# Config読んだ☆（＾～＾）\n")
 	e.G.Log.Trace("# Server=%s\n", config.Nngs.Server)

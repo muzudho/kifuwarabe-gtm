@@ -6,6 +6,7 @@ import (
 	"time"
 
 	e "github.com/muzudho/kifuwarabe-gtp/entities"
+	"github.com/muzudho/kifuwarabe-gtp/ui"
 	"github.com/ziutek/telnet"
 )
 
@@ -14,7 +15,7 @@ import (
 func KifuwarabeV1() {
 	e.G.Log.Trace("# きふわらべv1プログラム開始☆（＾～＾）\n")
 
-	config := e.LoadGameConf("input/kifuwarabe-v1.gameConf.toml")
+	config := ui.LoadEntryConf("input/kifuwarabe-v1.entryConf.toml")
 
 	/*
 		e.G.Log.Trace("# Config読んだ☆（＾～＾）\n")
