@@ -37,15 +37,6 @@ c:\go
 go mod init github.com/muzudho/kifuwarabe-gtp
 ```
 
-## Telnet
-
-```shell
-# Go言語 は 個人作成の同名のライブラリがいっぱいあるので 一番良さそうなのを検索してください。
-go get -v -u github.com/ziutek/telnet
-# ↓ これでもいいかも。
-# go get -v -u github.com/reiver/go-telnet
-```
-
 ## Gore
 
 ```shell

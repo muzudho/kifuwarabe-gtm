@@ -43,9 +43,14 @@ func debugPrintToml(fileData []byte) {
 	fmt.Printf("[情報] Engine.BoardData=%s\n", tomlTree.Get("Engine.BoardData").(string))
 }
 func debugPrintConfig(config e.EntryConf) {
-	fmt.Println("[情報] Memory:")
-	fmt.Printf("[情報] Engine.Komi=%f\n", config.Engine.Komi)
-	fmt.Printf("[情報] Engine.BoardSize=%d\n", config.Engine.BoardSize)
-	fmt.Printf("[情報] Engine.MaxMoves=%d\n", config.Engine.MaxMoves)
-	fmt.Printf("[情報] Engine.MaxMoves=%s\n", config.Engine.BoardData)
+	e.G.Log.Trace("[情報] Memory:\n")
+	e.G.Log.Trace("[情報] Server.Host=%s\n", config.Server.Host)
+	e.G.Log.Trace("[情報] Server.Port=%d\n", config.Server.Port)
+	e.G.Log.Trace("[情報] User.Name=%s\n", config.User.Name)
+	e.G.Log.Trace("[情報] User.Pass=%s\n", config.User.Pass)
+	e.G.Log.Trace("[情報] Engine.Komi=%f\n", config.Engine.Komi)
+	e.G.Log.Trace("[情報] Engine.BoardSize=%d\n", config.Engine.BoardSize)
+	e.G.Log.Trace("[情報] Engine.MaxMoves=%d\n", config.Engine.MaxMoves)
+	e.G.Log.Trace("[情報] Engine.MaxMoves=%s\n", config.Engine.BoardData)
+	e.G.Log.Trace("[情報] Engine.SentinelBoardMax()=%d\n", config.SentinelBoardMax())
 }

@@ -42,28 +42,16 @@ func main() {
 	// e.G.Chat.Print("Author: %s\n", e.Author)
 	// e.G.Chat.Print("This is a GTP engine.\n")
 
-	GoGoV9a() // GTP
+	GoGo() // GTP
 	//KifuwarabeV1()
 }
 
-// GoGoV9a - バージョン９a。
-// GTP2NNGS に対応しているのでは？
-func GoGoV9a() {
-	e.G.Log.Trace("# GoGo v9a プログラム開始☆（＾～＾）\n")
+// GoGo - GTP2NNGS に対応しているのでは？
+func GoGo() {
+	e.G.Log.Trace("# GoGo プログラム開始☆（＾～＾）\n")
 
 	// TODO ファイルが存在しなければ、強制終了します。
 	config := ui.LoadEntryConf("input/default.entryConf.toml")
-
-	e.G.Log.Trace("# Config読んだ☆（＾～＾）\n")
-	e.G.Log.Trace("# Server.Host=%s\n", config.Server.Host)
-	e.G.Log.Trace("# Server.Port=%d\n", config.Server.Port)
-	e.G.Log.Trace("# User.Name=%s\n", config.User.Name)
-	e.G.Log.Trace("# User.Pass=%s\n", config.User.Pass)
-	e.G.Log.Trace("# Engine.Komi=%f\n", config.Engine.Komi)
-	e.G.Log.Trace("# Engine.BoardSize=%d\n", config.Engine.BoardSize)
-	e.G.Log.Trace("# Engine.MaxMoves=%d\n", config.Engine.MaxMoves)
-	e.G.Log.Trace("# Engine.BoardData=%s\n", config.Engine.BoardData)
-	e.G.Log.Trace("# Engine.SentinelBoardMax()=%d\n", config.SentinelBoardMax())
 
 	board := e.NewBoard(config.GetBoardArray(), config.BoardSize(), config.SentinelBoardMax(), config.Komi(), config.MaxMoves())
 
