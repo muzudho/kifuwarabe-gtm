@@ -37,10 +37,10 @@ func KifuwarabeV1() {
 
 	board.InitBoard()
 
-	e.G.Log.Trace("# NNGSへの接続を試みるぜ☆（＾～＾） server=%s port=%d\n", config.Nngs.Server, config.Nngs.Port)
+	e.G.Log.Trace("# NNGSへの接続を試みるぜ☆（＾～＾） host=%s port=%d\n", config.Server.Host, config.Server.Port)
 
-	// connectionString := fmt.Sprintf("%s:%d", config.Nngs.Server, config.Nngs.Port)
-	// connectionString := fmt.Sprintf("localhost:5555", config.Nngs.Server, config.Nngs.Port)
+	// connectionString := fmt.Sprintf("%s:%d", config.Server.Host, config.Server.Port)
+	// connectionString := fmt.Sprintf("localhost:5555", config.Server.Host, config.Server.Port)
 
 	// "tcp" で合ってるよう。
 	nngsConn, err := telnet.Dial("tcp", "localhost:5555")
@@ -54,9 +54,9 @@ func KifuwarabeV1() {
 	defer nngsConn.Close()
 	e.G.Log.Trace("# NNGSへ接続でけた☆（＾～＾）\n")
 
-	e.G.Log.Trace("# NNGSへユーザー名 %s を送ったろ……☆（＾～＾）\n", config.Nngs.User)
+	e.G.Log.Trace("# NNGSへユーザー名 %s を送ったろ……☆（＾～＾）\n", config.User.Name)
 
-	nngsConn.Write([]byte(fmt.Sprintf("%s\n", config.Nngs.User)))
+	nngsConn.Write([]byte(fmt.Sprintf("%s\n", config.User.Name)))
 
 	e.G.Log.Trace("# NNGSからの返信を待と……☆（＾～＾）\n")
 

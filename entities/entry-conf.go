@@ -7,16 +7,24 @@ import (
 
 // EntryConf - Tomlファイル。
 type EntryConf struct {
-	Nngs Nngs
-	Game Game
+	Server Server
+	User   User
+	Game   Game
 }
 
-// Nngs - [Nngs] テーブル。
-type Nngs struct {
-	Server string
-	Port   uint16
-	User   string
-	Pass   string
+// Server - [Server] テーブル。
+type Server struct {
+	Host string
+	Port uint16
+}
+
+// User - [User] 区画。
+type User struct {
+	// Name - 対局者名（アカウント名）
+	// Only A-Z a-z 0-9
+	// Names may be at most 10 characters long
+	Name string
+	Pass string
 }
 
 // Game - [Game] テーブル。
