@@ -1,5 +1,10 @@
 package entities
 
+const (
+	// Author - 囲碁思考エンジンの作者名だぜ☆（＾～＾）
+	Author = "Satoshi Takahashi"
+)
+
 // GlobalVariables - グローバル変数。
 type GlobalVariables struct {
 	// Log - ロガー。

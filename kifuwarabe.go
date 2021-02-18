@@ -17,15 +17,6 @@ func KifuwarabeV1() {
 
 	config := ui.LoadEntryConf("input/kifuwarabe-v1.entryConf.toml")
 
-	/*
-		e.G.Log.Trace("# Config読んだ☆（＾～＾）\n")
-		e.G.Log.Trace("# Komi=%f\n", config.Game.Komi)
-		e.G.Log.Trace("# BoardSize=%d\n", config.Game.BoardSize)
-		e.G.Log.Trace("# MaxMoves=%d\n", config.Game.MaxMoves)
-		e.G.Log.Trace("# BoardData=%s\n", config.Game.BoardData)
-		e.G.Log.Trace("# SentinelBoardMax()=%d\n", config.SentinelBoardMax())
-	*/
-
 	board := e.NewBoard(config.GetBoardArray(), config.BoardSize(), config.SentinelBoardMax(), config.Komi(), config.MaxMoves())
 	// presenter := p.NewPresenterV9a()
 

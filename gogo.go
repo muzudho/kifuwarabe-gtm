@@ -59,11 +59,11 @@ func GoGoV9a() {
 	e.G.Log.Trace("# Server.Port=%d\n", config.Server.Port)
 	e.G.Log.Trace("# User.Name=%s\n", config.User.Name)
 	e.G.Log.Trace("# User.Pass=%s\n", config.User.Pass)
-	e.G.Log.Trace("# Game.Komi=%f\n", config.Game.Komi)
-	e.G.Log.Trace("# Game.BoardSize=%d\n", config.Game.BoardSize)
-	e.G.Log.Trace("# Game.MaxMoves=%d\n", config.Game.MaxMoves)
-	e.G.Log.Trace("# Game.BoardData=%s\n", config.Game.BoardData)
-	e.G.Log.Trace("# Game.SentinelBoardMax()=%d\n", config.SentinelBoardMax())
+	e.G.Log.Trace("# Engine.Komi=%f\n", config.Engine.Komi)
+	e.G.Log.Trace("# Engine.BoardSize=%d\n", config.Engine.BoardSize)
+	e.G.Log.Trace("# Engine.MaxMoves=%d\n", config.Engine.MaxMoves)
+	e.G.Log.Trace("# Engine.BoardData=%s\n", config.Engine.BoardData)
+	e.G.Log.Trace("# Engine.SentinelBoardMax()=%d\n", config.SentinelBoardMax())
 
 	board := e.NewBoard(config.GetBoardArray(), config.BoardSize(), config.SentinelBoardMax(), config.Komi(), config.MaxMoves())
 

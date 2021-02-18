@@ -9,7 +9,7 @@ import (
 type EntryConf struct {
 	Server Server
 	User   User
-	Game   Game
+	Engine Engine
 }
 
 // Server - [Server] テーブル。
@@ -27,8 +27,8 @@ type User struct {
 	Pass string
 }
 
-// Game - [Game] テーブル。
-type Game struct {
+// Engine - [Engine] テーブル。
+type Engine struct {
 	Komi      float32
 	BoardSize int8
 	MaxMoves  int16
@@ -38,7 +38,7 @@ type Game struct {
 // GetBoardArray - 盤上の石の色の配列。
 func (config EntryConf) GetBoardArray() []int {
 	// 最後のカンマを削除しないと、要素数が 1 多くなってしまいます。
-	s := strings.TrimRight(config.Game.BoardData, ",")
+	s := strings.TrimRight(config.Engine.BoardData, ",")
 	// fmt.Println("s=", s)
 	nodes := strings.Split(s, ",")
 	array := make([]int, len(nodes))
@@ -56,23 +56,23 @@ func (config EntryConf) GetBoardArray() []int {
 
 // BoardSize - 何路盤か。
 func (config EntryConf) BoardSize() int {
-	return int(config.Game.BoardSize)
+	return int(config.Engine.BoardSize)
 }
 
 // SentinelBoardMax - 枠付きの盤上の交点の数
 func (config EntryConf) SentinelBoardMax() int {
 	// Width - 枠込み。
-	Width := int(config.Game.BoardSize) + 2
+	Width := int(config.Engine.BoardSize) + 2
 	// BoardMax - 枠込み盤の配列サイズ。
 	return Width * Width
 }
 
 // Komi - float 32bit で足りるが、実行速度優先で float 64bit に変換して返します。
 func (config EntryConf) Komi() float64 {
-	return float64(config.Game.Komi)
+	return float64(config.Engine.Komi)
 }
 
 // MaxMoves - 最大手数。
 func (config EntryConf) MaxMoves() int {
-	return int(config.Game.MaxMoves)
+	return int(config.Engine.MaxMoves)
 }

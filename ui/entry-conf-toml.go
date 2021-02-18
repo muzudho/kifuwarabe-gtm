@@ -37,13 +37,15 @@ func debugPrintToml(fileData []byte) {
 		panic(err)
 	}
 	fmt.Println("[情報] Input:")
-	fmt.Printf("Game.Komi=%f\n", tomlTree.Get("Game.Komi").(float64))
-	fmt.Printf("Game.BoardSize=%d\n", tomlTree.Get("").(int64))
-	fmt.Printf("Game.MaxMoves=%d\n", tomlTree.Get("").(int64))
+	fmt.Printf("[情報] Engine.Komi=%f\n", tomlTree.Get("Engine.Komi").(float64))
+	fmt.Printf("[情報] Engine.BoardSize=%d\n", tomlTree.Get("Engine.BoardSize").(int64))
+	fmt.Printf("[情報] Engine.MaxMoves=%d\n", tomlTree.Get("Engine.MaxMoves").(int64))
+	fmt.Printf("[情報] Engine.BoardData=%s\n", tomlTree.Get("Engine.BoardData").(string))
 }
 func debugPrintConfig(config e.EntryConf) {
 	fmt.Println("[情報] Memory:")
-	fmt.Printf("[情報] Game.Komi=%f\n", config.Game.Komi)
-	fmt.Printf("[情報] Game.Komi=%d\n", config.Game.BoardSize)
-	fmt.Printf("[情報] Game.Komi=%d\n", config.Game.MaxMoves)
+	fmt.Printf("[情報] Engine.Komi=%f\n", config.Engine.Komi)
+	fmt.Printf("[情報] Engine.BoardSize=%d\n", config.Engine.BoardSize)
+	fmt.Printf("[情報] Engine.MaxMoves=%d\n", config.Engine.MaxMoves)
+	fmt.Printf("[情報] Engine.MaxMoves=%s\n", config.Engine.BoardData)
 }

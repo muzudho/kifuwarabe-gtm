@@ -13,7 +13,7 @@ Name = 'kifuwara_w'
 
 Pass = '' # your password (any)
 
-[Game]
+[Engine]
 
 # Komi - コミ☆（＾～＾）
 Komi = 6.5
