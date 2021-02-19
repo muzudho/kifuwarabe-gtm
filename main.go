@@ -23,7 +23,7 @@ func main() {
 	// Working directory
 	wdir, err := os.Getwd()
 	if err != nil {
-		panic(fmt.Sprintf("[情報] wdir=%s", wdir))
+		panic(fmt.Sprintf("<Engine> wdir=%s", wdir))
 	}
 
 	// コマンドライン引数
@@ -46,13 +46,13 @@ func main() {
 		filepath.Join(*workdir, "output/fatal.log"),
 		filepath.Join(*workdir, "output/print.log"))
 
-	u.G.Log.Trace("[情報] KifuwarabeGoGo プログラム開始☆（＾～＾）\n")
-	u.G.Log.Trace("[情報] Author: %s\n", u.Author)
-	u.G.Log.Trace("[情報] This is a GTP engine.\n")
-	u.G.Log.Trace("[情報] wdir=%s\n", wdir)
-	u.G.Log.Trace("[情報] flag.Args()=%s\n", flag.Args())
-	u.G.Log.Trace("[情報] workdir=%s\n", *workdir)
-	u.G.Log.Trace("[情報] entryConfPath=%s\n", entryConfPath)
+	u.G.Log.Trace("<Engine> KifuwarabeGoGo プログラム開始☆（＾～＾）\n")
+	u.G.Log.Trace("<Engine> Author: %s\n", u.Author)
+	u.G.Log.Trace("<Engine> This is a GTP engine.\n")
+	u.G.Log.Trace("<Engine> wdir=%s\n", wdir)
+	u.G.Log.Trace("<Engine> flag.Args()=%s\n", flag.Args())
+	u.G.Log.Trace("<Engine> workdir=%s\n", *workdir)
+	u.G.Log.Trace("<Engine> entryConfPath=%s\n", entryConfPath)
 
 	// チャッターの作成。 標準出力とロガーを一緒にしただけです。
 	u.G.Chat = *u.NewChatter(u.G.Log)
@@ -62,15 +62,15 @@ func main() {
 
 	board := e.NewBoard(config.GetBoardArray(), config.BoardSize(), config.SentinelBoardMax(), config.Komi(), config.MaxMoves())
 
-	u.G.Log.Trace("[情報] board.BoardSize()=%d\n", board.BoardSize())
-	u.G.Log.Trace("[情報] board.SentinelBoardMax()=%d\n", board.SentinelBoardMax())
+	u.G.Log.Trace("<Engine> board.BoardSize()=%d\n", board.BoardSize())
+	u.G.Log.Trace("<Engine> board.SentinelBoardMax()=%d\n", board.SentinelBoardMax())
 
 	presenter := p.NewPresenterV9a()
 
 	rand.Seed(time.Now().UnixNano())
 	board.InitBoard()
 
-	u.G.Log.Trace("[情報] 何か標準入力しろだぜ☆（＾～＾）\n")
+	u.G.Log.Trace("<Engine> 何か標準入力しろだぜ☆（＾～＾）\n")
 
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
@@ -147,7 +147,7 @@ func main() {
 				tIdx := board.GetTIdxFromXy(int(x)-1, board.BoardSize()-y)
 
 				// fmt.Fprintf(os.Stderr, "x=%d y=%d z=%04d\n", x, y, board.GetZ4(tIdx))
-				u.G.Log.Trace("[情報] x=%d y=%d z=%04d\n", x, y, board.GetZ4(tIdx))
+				u.G.Log.Trace("<Engine> x=%d y=%d z=%04d\n", x, y, board.GetZ4(tIdx))
 
 				if ax == "pass" {
 					tIdx = 0
