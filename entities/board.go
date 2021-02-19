@@ -4,7 +4,11 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"regexp"
+	"strings"
 	"time"
+
+	u "github.com/muzudho/kifuwarabe-gtp/usecases"
 )
 
 // IBoard - 盤。
@@ -192,6 +196,121 @@ func (board Board) GetEmptyTIdx() int {
 		}
 	}
 	return tIdx
+}
+
+// GetXYFromName - "A1" を (1,1) に変換します
+func GetXYFromName(name string) (int, int) {
+	// fmt.Fprintf(os.Stderr, "ax=%s\n", ax)
+	u.G.Log.Trace("<Engine> name=%s\n", name)
+
+	if name == "Pass" {
+		return 0, 0
+	}
+
+	regexCoord := *regexp.MustCompile("([A-Z])(\\d+)")
+	matches211 := regexCoord.FindSubmatch([]byte(name))
+
+	var xStr string
+	var yStr string
+	if 1 < len(matches211) {
+		xStr = strings.ToUpper(string(matches211[1]))
+		yStr = string(matches211[2])
+		u.G.Chat.Trace("<Engine> xStr=[%s] yStr=[%s]\n", xStr, yStr)
+	} else {
+		panic(fmt.Sprintf("Unexpected name=[%s]", name))
+	}
+
+	var x int
+	switch xStr {
+	case "A":
+		x = 0
+	case "B":
+		x = 1
+	case "C":
+		x = 2
+	case "D":
+		x = 3
+	case "E":
+		x = 4
+	case "F":
+		x = 5
+	case "G":
+		x = 6
+	case "H":
+		x = 7
+	case "J":
+		x = 8
+	case "K":
+		x = 9
+	case "L":
+		x = 10
+	case "M":
+		x = 11
+	case "N":
+		x = 12
+	case "O":
+		x = 13
+	case "P":
+		x = 14
+	case "Q":
+		x = 15
+	case "R":
+		x = 16
+	case "S":
+		x = 17
+	case "T":
+		x = 18
+	default:
+		panic(fmt.Sprintf("Unexpected xStr=[%s]", xStr))
+	}
+
+	var y int
+	switch yStr {
+	case "1":
+		y = 0
+	case "2":
+		y = 1
+	case "3":
+		y = 2
+	case "4":
+		y = 3
+	case "5":
+		y = 4
+	case "6":
+		y = 5
+	case "7":
+		y = 6
+	case "8":
+		y = 7
+	case "9":
+		y = 8
+	case "10":
+		y = 9
+	case "11":
+		y = 10
+	case "12":
+		y = 11
+	case "13":
+		y = 12
+	case "14":
+		y = 13
+	case "15":
+		y = 14
+	case "16":
+		y = 15
+	case "17":
+		y = 16
+	case "18":
+		y = 17
+	case "19":
+		y = 18
+	default:
+		panic(fmt.Sprintf("Unexpected yStr=[%s]", yStr))
+	}
+
+	u.G.Log.Trace("<Engine> x=%d y=%d\n", x, y)
+
+	return x, y
 }
 
 // NewBoard - 盤を作成します。

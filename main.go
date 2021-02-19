@@ -75,37 +75,39 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		command := scanner.Text()
+		u.G.Log.Trace("<Engine> '%s' コマンドを受け取ったぜ☆（＾～＾）\n", command)
+
 		tokens := strings.Split(command, " ")
 		switch tokens[0] {
 		case "boardsize":
-			u.G.Log.Debug("'boardsize' には空行を返すぜ（＾～＾）\n")
+			u.G.Log.Trace("<Engine> 'boardsize' には空行を返すぜ（＾～＾）\n")
 			u.G.Chat.Print("= \n\n")
 		case "clear_board":
 			board.InitBoard()
-			u.G.Log.Debug("'clear_board' に対応して盤を初期化するぜ（＾～＾）\n")
+			u.G.Log.Trace("<Engine> 'clear_board' に対応して盤を初期化するぜ（＾～＾）\n")
 			u.G.Chat.Print("= \n\n")
 		case "quit":
-			u.G.Log.Debug("'quit' に対応してアプリケーションを終了するぜ（＾～＾）\n")
+			u.G.Log.Trace("<Engine> 'quit' に対応してアプリケーションを終了するぜ（＾～＾）\n")
 			os.Exit(0)
 		case "protocol_version":
-			u.G.Log.Debug("'protocol_version' に対応してバージョン番号を返すぜ（＾～＾）\n")
+			u.G.Log.Trace("<Engine> 'protocol_version' に対応してバージョン番号を返すぜ（＾～＾）\n")
 			u.G.Chat.Print("= 2\n\n")
 		case "name":
-			u.G.Log.Debug("'name' に対応して名前を返すぜ（＾～＾）\n")
+			u.G.Log.Trace("<Engine> 'name' に対応して名前を返すぜ（＾～＾）\n")
 			u.G.Chat.Print("= KwGoGo\n\n")
 		case "version":
-			u.G.Log.Debug("'version' に対応してバージョン番号を返すぜ（＾～＾）\n")
+			u.G.Log.Trace("<Engine> 'version' に対応してバージョン番号を返すぜ（＾～＾）\n")
 			u.G.Chat.Print("= 0.0.1\n\n")
 		case "list_commands":
-			u.G.Log.Debug("'list_commands' に対応してコマンドのリストを返すぜ（＾～＾）\n")
+			u.G.Log.Trace("<Engine> 'list_commands' に対応してコマンドのリストを返すぜ（＾～＾）\n")
 			u.G.Chat.Print("= boardsize\nclear_board\nquit\nprotocol_version\nundo\n" +
 				"name\nversion\nlist_commands\nkomi\ngenmove\nplay\n\n")
 		case "komi":
-			u.G.Log.Debug("'komi' に対応してコミを返すぜ（＾～＾）\n")
+			u.G.Log.Trace("<Engine> 'komi' に対応してコミを返すぜ（＾～＾）\n")
 			u.G.Chat.Print("= 6.5\n\n") // TODO コミ
 		case "undo":
 			u.UndoV9()
-			u.G.Log.Debug("'undo' は未実装だぜ（＾～＾）\n")
+			u.G.Log.Trace("<Engine> 'undo' は未実装だぜ（＾～＾）\n")
 			u.G.Chat.Print("= \n\n")
 		// 19路盤だと、すごい長い時間かかる。
 		// genmove b
@@ -118,7 +120,7 @@ func main() {
 
 			bestmoveString := p.GetPointName(board, tIdx)
 
-			u.G.Log.Debug("'genmove' に対応して[%s]を返すぜ（＾～＾）\n", bestmoveString)
+			u.G.Log.Trace("<Engine> 'genmove' に対応して[%s]を返すぜ（＾～＾）\n", bestmoveString)
 			u.G.Chat.Print("= %s\n\n", bestmoveString)
 		// play b a3
 		// play w d4
@@ -131,34 +133,35 @@ func main() {
 		// play b pass
 		// play w pass
 		case "play":
+			// u.G.Log.Trace("<Engine> 'play' コマンドを受け取ったぜ☆（＾～＾）\n")
+
 			color := 1
 			if 1 < len(tokens) && strings.ToLower(tokens[1]) == "w" {
 				color = 2
 			}
 
+			u.G.Log.Trace("<Engine> color=%d len(tokens)=%d\n", color, len(tokens))
+
 			if 2 < len(tokens) {
-				ax := strings.ToLower(tokens[2])
-				fmt.Fprintf(os.Stderr, "ax=%s\n", ax)
-				x := ax[0] - 'a' + 1
-				if ax[0] >= 'i' {
-					x--
-				}
-				y := int(ax[1] - '0')
-				tIdx := board.GetTIdxFromXy(int(x)-1, board.BoardSize()-y)
-
-				// fmt.Fprintf(os.Stderr, "x=%d y=%d z=%04d\n", x, y, board.GetZ4(tIdx))
-				u.G.Log.Trace("<Engine> x=%d y=%d z=%04d\n", x, y, board.GetZ4(tIdx))
-
-				if ax == "pass" {
+				var tIdx int
+				if strings.ToLower(tokens[2]) == "pass" {
 					tIdx = 0
+					u.G.Log.Trace("<Engine> Pass\n")
+				} else {
+					x, y := e.GetXYFromName(tokens[2])
+
+					tIdx = board.GetTIdxFromXy(x, y)
+
+					// fmt.Fprintf(os.Stderr, "x=%d y=%d z=%04d\n", x, y, board.GetZ4(tIdx))
+					u.G.Log.Trace("<Engine> x=%d y=%d z=%04d\n", x, y, board.GetZ4(tIdx))
 				}
 				board.AddMovesType2(tIdx, color, 0, presenter.PrintBoardType2)
 
-				u.G.Log.Debug("'play' に対応して空行を返すぜ（＾～＾）\n")
+				u.G.Log.Trace("'play' に対応して空行を返すぜ（＾～＾）\n")
 				u.G.Chat.Print("= \n\n")
 			}
 		default:
-			u.G.Log.Debug("'%s' コマンドには未対応だぜ（＾～＾）\n", tokens[0])
+			u.G.Log.Trace("'%s' コマンドには未対応だぜ（＾～＾）\n", tokens[0])
 			u.G.Chat.Print("? unknown_command\n\n")
 		}
 	}
