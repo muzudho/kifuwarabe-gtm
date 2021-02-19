@@ -7,8 +7,6 @@ import (
 	"regexp"
 	"strings"
 	"time"
-
-	u "github.com/muzudho/kifuwarabe-gtp/usecases"
 )
 
 // IBoard - 盤。
@@ -17,6 +15,9 @@ type IBoard interface {
 	ColorAt(tIdx int) int
 	ColorAtXy(x int, y int) int
 	SetColor(tIdx int, color int)
+
+	// GetNameFromTIdx -
+	GetNameFromTIdx(tIdx int) string
 
 	CopyData() []int
 	ImportData(boardCopy2 []int)
@@ -49,8 +50,10 @@ type IBoard interface {
 	MaxMoves() int
 	// GetTIdxFromXy - YX形式の座標を、tIdx（配列のインデックス）へ変換します。
 	GetTIdxFromXy(x int, y int) int
+
 	// GetZ4 - tIdx（配列のインデックス）を XXYY形式へ変換します。
-	GetZ4(tIdx int) int
+	// GetZ4(tIdx int) int
+
 	// UctChildrenSize - UCTの最大手数
 	UctChildrenSize() int
 }
@@ -92,6 +95,8 @@ var Moves int
 
 // FlagTestPlayout - ？。
 var FlagTestPlayout int
+
+var labelOfColumns = []string{"A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"}
 
 // Board - 盤。
 type Board struct {
@@ -168,6 +173,7 @@ func (board *Board) ImportData(boardCopy2 []int) {
 	copy(board.data[:], boardCopy2[:])
 }
 
+/*
 // GetZ4 - tIdx（配列のインデックス）を XXYY形式（3～4桁の数）の座標へ変換します。
 func (board Board) GetZ4(tIdx int) int {
 	if tIdx == 0 {
@@ -177,10 +183,27 @@ func (board Board) GetZ4(tIdx int) int {
 	x := tIdx - y*board.SentinelWidth()
 	return x*100 + y
 }
+*/
+
+// GetNameFromTIdx -
+func (board Board) GetNameFromTIdx(tIdx int) string {
+	x, y := board.GetXYFromTIdx(tIdx)
+	return GetNameFromXY(x, y)
+}
+
+// GetNameFromXY - (1,1) を "A1" に変換
+func GetNameFromXY(x int, y int) string {
+	return fmt.Sprintf("%s%d", labelOfColumns[x], y)
+}
 
 // GetTIdxFromXy - x,y を tIdx（配列のインデックス）へ変換します。
 func (board Board) GetTIdxFromXy(x int, y int) int {
 	return (y+1)*board.SentinelWidth() + x + 1
+}
+
+// GetXYFromTIdx - x,y を tIdx（配列のインデックス）へ変換します。
+func (board Board) GetXYFromTIdx(tIdx int) (int, int) {
+	return tIdx / board.SentinelWidth(), tIdx % board.SentinelWidth()
 }
 
 // GetEmptyTIdx - 空点の tIdx（配列のインデックス）を返します。
@@ -201,13 +224,13 @@ func (board Board) GetEmptyTIdx() int {
 // GetXYFromName - "A1" を (1,1) に変換します
 func GetXYFromName(name string) (int, int) {
 	// fmt.Fprintf(os.Stderr, "ax=%s\n", ax)
-	u.G.Log.Trace("<Engine> name=%s\n", name)
+	//u.G.Log.Trace("<Engine> name=%s\n", name)
 
 	if name == "Pass" {
 		return 0, 0
 	}
 
-	regexCoord := *regexp.MustCompile("([A-Z])(\\d+)")
+	regexCoord := *regexp.MustCompile("([A-Za-z])(\\d+)")
 	matches211 := regexCoord.FindSubmatch([]byte(name))
 
 	var xStr string
@@ -215,9 +238,10 @@ func GetXYFromName(name string) (int, int) {
 	if 1 < len(matches211) {
 		xStr = strings.ToUpper(string(matches211[1]))
 		yStr = string(matches211[2])
-		u.G.Chat.Trace("<Engine> xStr=[%s] yStr=[%s]\n", xStr, yStr)
+		//u.G.Chat.Trace("<Engine> xStr=[%s] yStr=[%s]\n", xStr, yStr)
 	} else {
-		panic(fmt.Sprintf("Unexpected name=[%s]", name))
+		message := fmt.Sprintf("Unexpected name=[%s]", name)
+		panic(message)
 	}
 
 	var x int
@@ -261,7 +285,8 @@ func GetXYFromName(name string) (int, int) {
 	case "T":
 		x = 18
 	default:
-		panic(fmt.Sprintf("Unexpected xStr=[%s]", xStr))
+		message := fmt.Sprintf("Unexpected xStr=[%s]", xStr)
+		panic(message)
 	}
 
 	var y int
@@ -305,10 +330,11 @@ func GetXYFromName(name string) (int, int) {
 	case "19":
 		y = 18
 	default:
-		panic(fmt.Sprintf("Unexpected yStr=[%s]", yStr))
+		message := fmt.Sprintf("Unexpected yStr=[%s]", yStr)
+		panic(message)
 	}
 
-	u.G.Log.Trace("<Engine> x=%d y=%d\n", x, y)
+	//u.G.Log.Trace("<Engine> x=%d y=%d\n", x, y)
 
 	return x, y
 }
@@ -570,8 +596,8 @@ func (board *Board) Playout(turnColor int, printBoardType1 func(IBoard)) int {
 		}
 		previousTIdx = tIdx
 		// printBoardType1()
-		// fmt.Printf("loop=%d,z=%04d,c=%d,emptyNum=%d,KoZ=%04d\n",
-		// 	loop, e.GetZ4(tIdx), color, emptyNum, e.GetZ4(KoIdx))
+		// fmt.Printf("loop=%d,tIdx=%s,c=%d,emptyNum=%d,Ko=%s\n",
+		// 	loop, e.GetNameFromXY(tIdx), color, emptyNum, e.GetNameFromXY(KoIdx))
 		color = FlipColor(color)
 	}
 	return countScoreV7(board, turnColor)
@@ -617,7 +643,7 @@ func (board *Board) PrimitiveMonteCalro(color int, printBoardType1 func(IBoard))
 			if bestValue < winRate {
 				bestValue = winRate
 				bestTIdx = z
-				// fmt.Printf("(primitiveMonteCalroV9) bestZ=%04d,color=%d,v=%5.3f,tryNum=%d\n", e.GetZ4(bestZ), color, bestValue, tryNum)
+				// fmt.Printf("(primitiveMonteCalroV9) bestTIdx=%s,color=%d,v=%5.3f,tryNum=%d\n", bestTIdx, color, bestValue, tryNum)
 			}
 			KoIdx = koZCopy
 			board.ImportData(boardCopy)
@@ -642,7 +668,7 @@ func (board *Board) AddMovesType1(tIdx int, color int, printBoardType2 func(IBoa
 func (board *Board) AddMovesType2(tIdx int, color int, sec float64, printBoardType2 func(IBoard, int)) {
 	err := board.PutStone(tIdx, color, FillEyeOk)
 	if err != 0 {
-		fmt.Fprintf(os.Stderr, "(addMoves9a) Err!\n")
+		fmt.Fprintf(os.Stderr, "(AddMovesType2) Err=%d\n", err)
 		os.Exit(0)
 	}
 	Record[Moves] = tIdx
@@ -658,7 +684,7 @@ func (board *Board) GetComputerMove(color int, fUCT int, printBoardType1 func(IB
 	AllPlayouts = 0
 	tIdx = board.PrimitiveMonteCalro(color, printBoardType1)
 	sec := time.Since(start).Seconds()
-	fmt.Printf("(playoutV9) %.1f sec, %.0f playout/sec, play_z=%04d,moves=%d,color=%d,playouts=%d,fUCT=%d\n",
-		sec, float64(AllPlayouts)/sec, board.GetZ4(tIdx), Moves, color, AllPlayouts, fUCT)
+	fmt.Printf("(playoutV9) %.1f sec, %.0f playout/sec, play=%s,moves=%d,color=%d,playouts=%d,fUCT=%d\n",
+		sec, float64(AllPlayouts)/sec, board.GetNameFromTIdx(tIdx), Moves, color, AllPlayouts, fUCT)
 	return tIdx
 }

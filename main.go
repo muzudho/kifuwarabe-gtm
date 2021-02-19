@@ -23,7 +23,9 @@ func main() {
 	// Working directory
 	wdir, err := os.Getwd()
 	if err != nil {
-		panic(fmt.Sprintf("<Engine> wdir=%s", wdir))
+		message := fmt.Sprintf("<Engine> wdir=%s", wdir)
+		u.G.Log.Fatal(message)
+		panic(message)
 	}
 
 	// コマンドライン引数
@@ -143,6 +145,7 @@ func main() {
 			u.G.Log.Trace("<Engine> color=%d len(tokens)=%d\n", color, len(tokens))
 
 			if 2 < len(tokens) {
+				u.G.Log.Trace("<Engine> tokens[2]=%s\n", tokens[2])
 				var tIdx int
 				if strings.ToLower(tokens[2]) == "pass" {
 					tIdx = 0
@@ -152,8 +155,8 @@ func main() {
 
 					tIdx = board.GetTIdxFromXy(x, y)
 
-					// fmt.Fprintf(os.Stderr, "x=%d y=%d z=%04d\n", x, y, board.GetZ4(tIdx))
-					u.G.Log.Trace("<Engine> x=%d y=%d z=%04d\n", x, y, board.GetZ4(tIdx))
+					// fmt.Fprintf(os.Stderr, "x=%d y=%d\n", x, y)
+					u.G.Log.Trace("<Engine> x=%d y=%d\n", x, y)
 				}
 				board.AddMovesType2(tIdx, color, 0, presenter.PrintBoardType2)
 
