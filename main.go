@@ -160,11 +160,11 @@ func main() {
 				}
 				board.AddMovesType2(tIdx, color, 0, presenter.PrintBoardType2)
 
-				u.G.Log.Trace("'play' に対応して空行を返すぜ（＾～＾）\n")
+				u.G.Log.Trace("<Engine> 'play' に対応して空行を返すぜ（＾～＾）\n")
 				u.G.Chat.Print("= \n\n")
 			}
 		default:
-			u.G.Log.Trace("'%s' コマンドには未対応だぜ（＾～＾）\n", tokens[0])
+			u.G.Log.Trace("<Engine> '%s' コマンドには未対応だぜ（＾～＾）\n", tokens[0])
 			u.G.Chat.Print("? unknown_command\n\n")
 		}
 	}
