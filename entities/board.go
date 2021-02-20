@@ -28,8 +28,8 @@ const (
 // For count liberty.
 var checkBoard = []int{}
 
-// MovesCount - 手数
-var MovesCount int
+// MovesNum - 手数
+var MovesNum int
 
 var labelOfColumns = []string{"A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"}
 
@@ -90,7 +90,7 @@ func (board *Board) InitBoard() {
 		}
 	}
 
-	MovesCount = 0
+	MovesNum = 0
 	board.KoIdx = 0
 }
 
@@ -286,9 +286,9 @@ func (board *Board) AddMoves(tIdx int, color int, sec float64) {
 		fmt.Fprintf(os.Stderr, "(AddMoves) Err=%d\n", err)
 		os.Exit(0)
 	}
-	Record[MovesCount] = tIdx
-	RecordTime[MovesCount] = sec
-	MovesCount++
+	Record[MovesNum] = tIdx
+	RecordTime[MovesNum] = sec
+	MovesNum++
 }
 
 // Komi - コミ

@@ -162,8 +162,8 @@ func main() {
 					u.G.Log.Trace("<Engine> x=%d y=%d\n", x, y)
 				}
 				board.AddMoves(tIdx, color, 0)
-				presenter.PrintBoardHeader(board, e.MovesCount)
-				presenter.PrintBoardType2(board, e.MovesCount)
+				presenter.PrintBoardHeader(board, e.MovesNum)
+				presenter.PrintBoardType2(board, e.MovesNum)
 
 				u.G.Log.Trace("<Engine> 'play' に対応して空行を返すぜ（＾～＾）\n")
 				u.G.Chat.Print("= \n\n")

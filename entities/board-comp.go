@@ -163,6 +163,6 @@ func GetComputerMove(board *Board, color int, fUCT int, printBoardType1 func(*Bo
 	tIdx = board.PrimitiveMonteCalro(color, printBoardType1)
 	sec := time.Since(start).Seconds()
 	fmt.Printf("(GetComputerMove) %.1f sec, %.0f playout/sec, play=%s,moves=%d,color=%d,playouts=%d,fUCT=%d\n",
-		sec, float64(AllPlayouts)/sec, (*board).GetNameFromTIdx(tIdx), MovesCount, color, AllPlayouts, fUCT)
+		sec, float64(AllPlayouts)/sec, (*board).GetNameFromTIdx(tIdx), MovesNum, color, AllPlayouts, fUCT)
 	return tIdx
 }

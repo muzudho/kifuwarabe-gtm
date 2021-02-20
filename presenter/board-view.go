@@ -53,6 +53,7 @@ func (presenter *BoardView) PrintBoardType1(board *e.Board) {
 
 // PrintBoardHeader - 手数などを表示
 func PrintBoardHeader(board *e.Board, moves int) {
+	fmt.Fprintf(os.Stderr, "[ Ko=%s MovesNum=%d ]\n", (*board).GetNameFromTIdx(board.KoIdx), moves)
 }
 
 // PrintBoardType2 - 盤を描画。
@@ -82,7 +83,6 @@ func PrintBoardType2(board *e.Board, moves int) {
 		fmt.Fprintf(os.Stderr, "--")
 	}
 	fmt.Fprintf(os.Stderr, "+\n")
-	fmt.Fprintf(os.Stderr, "  Ko=%s,moves=%d\n", (*board).GetNameFromTIdx(board.KoIdx), moves)
 }
 
 // PrintSgf - SGF形式の棋譜表示。
