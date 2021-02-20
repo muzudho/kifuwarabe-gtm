@@ -86,7 +86,7 @@ func (board *Board) InitBoard() {
 	// 盤上に石を置きます
 	for y := 0; y < boardSize; y++ {
 		for x := 0; x < boardSize; x++ {
-			board.SetColor(board.GetTIdxFromXy(x, y), 0)
+			board.SetColor(board.GetTIdxFromFileRank(x+1, y+1), 0)
 		}
 	}
 
@@ -223,9 +223,9 @@ func (board *Board) PutStone(tIdx int, color int, fillEyeErr int) int {
 	return 0
 }
 
-// GetTIdxFromXy - x,y を tIdx（配列のインデックス）へ変換します。
-func (board Board) GetTIdxFromXy(x int, y int) int {
-	return (y+1)*board.SentinelWidth() + x + 1
+// GetTIdxFromFileRank - x,y を tIdx（配列のインデックス）へ変換します。
+func (board Board) GetTIdxFromFileRank(file int, rank int) int {
+	return rank*board.SentinelWidth() + file
 }
 
 // GetNameFromTIdx -
@@ -241,7 +241,7 @@ func (board Board) GetEmptyTIdx() int {
 		// ランダムに交点を選んで、空点を見つけるまで繰り返します。
 		x = rand.Intn(9)
 		y = rand.Intn(9)
-		tIdx = board.GetTIdxFromXy(x, y)
+		tIdx = board.GetTIdxFromFileRank(x+1, y+1)
 		if !board.Exists(tIdx) {
 			break
 		}

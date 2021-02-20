@@ -27,7 +27,7 @@ func (board *Board) Playout(turnColor int, printBoardType1 func(*Board)) int {
 		var emptyNum, r, tIdx int
 		for y := 0; y <= boardSize; y++ {
 			for x := 0; x < boardSize; x++ {
-				tIdx = (*board).GetTIdxFromXy(x, y)
+				tIdx = (*board).GetTIdxFromFileRank(x+1, y+1)
 				if (*board).Exists(tIdx) {
 					continue
 				}
@@ -70,7 +70,7 @@ func (board *Board) countScore(turnColor int) int {
 
 	for y := 0; y < boardSize; y++ {
 		for x := 0; x < boardSize; x++ {
-			tIdx := (*board).GetTIdxFromXy(x, y)
+			tIdx := (*board).GetTIdxFromFileRank(x+1, y+1)
 			color2 := (*board).ColorAt(tIdx)
 			kind[color2]++
 			if color2 != 0 {
@@ -122,7 +122,7 @@ func (board *Board) PrimitiveMonteCalro(color int, printBoardType1 func(*Board))
 
 	for y := 0; y <= boardSize; y++ {
 		for x := 0; x < boardSize; x++ {
-			z := (*board).GetTIdxFromXy(x, y)
+			z := (*board).GetTIdxFromFileRank(x+1, y+1)
 			if (*board).Exists(z) {
 				continue
 			}

@@ -156,7 +156,7 @@ func main() {
 						panic(err)
 					}
 
-					tIdx = board.GetTIdxFromXy(x, y)
+					tIdx = board.GetTIdxFromFileRank(x+1, y+1)
 
 					u.G.Log.Trace("<Engine> x=%d y=%d\n", x, y)
 				}
