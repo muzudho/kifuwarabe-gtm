@@ -3,6 +3,8 @@ package usecases
 import (
 	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -45,7 +47,28 @@ func NewLogger(
 // Go言語では、 yyyy とかではなく、定められた数をそこに置くのらしい☆（＾～＾）
 const timeStampLayout = "2006-01-02 15:04:05"
 
-// write - ログファイルに書き込みます。
+// RemoveAllOldLogs - 既存のログファイルを削除します
+// 誤動作防止のため、 basename の末尾が '.log' か、または basename に '.log.' が含まれるものだけ削除できるものとします。
+func (logger *Logger) RemoveAllOldLogs() {
+	logger.removeLog(logger.tracePath)
+	logger.removeLog(logger.debugPath)
+	logger.removeLog(logger.infoPath)
+	logger.removeLog(logger.noticePath)
+	logger.removeLog(logger.warnPath)
+	logger.removeLog(logger.errorPath)
+	logger.removeLog(logger.fatalPath)
+	logger.removeLog(logger.printPath)
+}
+
+// 誤動作防止のため、 basename の末尾が '.log' か、または basename に '.log.' が含まれるものだけ削除できるものとします。
+func (logger *Logger) removeLog(path string) {
+	basename := filepath.Base(path)
+	if strings.HasSuffix(basename, ".log") || strings.Contains(basename, ".log.") {
+		os.Remove(path)
+	}
+}
+
+// write - ログファイルに書き込みます
 func write(filePath string, text string, args ...interface{}) {
 	// TODO ファイルの開閉回数を減らせないものか。
 	// 追加書込み。
