@@ -77,39 +77,39 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		command := scanner.Text()
-		u.G.Log.Trace("-->Engine '%s' command\n", command)
+		u.G.Log.Notice("-->%s '%s' command\n", config.User.Name, command)
 
 		tokens := strings.Split(command, " ")
 		switch tokens[0] {
 		case "boardsize":
-			u.G.Log.Trace("<--Engine ok\n")
+			u.G.Log.Notice("<--%s ok\n", config.User.Name)
 			u.G.Chat.Print("= \n\n")
 		case "clear_board":
 			board.InitBoard()
-			u.G.Log.Trace("<--Engine ok\n")
+			u.G.Log.Notice("<--%s ok\n", config.User.Name)
 			u.G.Chat.Print("= \n\n")
 		case "quit":
-			u.G.Log.Trace("<--Engine Quit\n")
+			u.G.Log.Notice("<--%s Quit\n", config.User.Name)
 			os.Exit(0)
 		case "protocol_version":
-			u.G.Log.Trace("<--Engine Version ok\n")
+			u.G.Log.Notice("<--%s Version ok\n", config.User.Name)
 			u.G.Chat.Print("= 2\n\n")
 		case "name":
-			u.G.Log.Trace("<--Engine Name ok\n")
+			u.G.Log.Notice("<--%s Name ok\n", config.User.Name)
 			u.G.Chat.Print("= KwGoGo\n\n")
 		case "version":
-			u.G.Log.Trace("<--Engine Version ok\n")
+			u.G.Log.Notice("<--%s Version ok\n", config.User.Name)
 			u.G.Chat.Print("= 0.0.1\n\n")
 		case "list_commands":
-			u.G.Log.Trace("<--Engine CommandList ok\n")
+			u.G.Log.Notice("<--%s CommandList ok\n", config.User.Name)
 			u.G.Chat.Print("= boardsize\nclear_board\nquit\nprotocol_version\nundo\n" +
 				"name\nversion\nlist_commands\nkomi\ngenmove\nplay\n\n")
 		case "komi":
-			u.G.Log.Trace("<--Engine Komi ok\n")
+			u.G.Log.Notice("<--%s Komi ok\n", config.User.Name)
 			u.G.Chat.Print("= 6.5\n\n") // TODO コミ
 		case "undo":
 			u.UndoV9() // TODO アンドゥ
-			u.G.Log.Trace("<--Engine Unimplemented undo, ignored\n")
+			u.G.Log.Notice("<--%s Unimplemented undo, ignored\n", config.User.Name)
 			u.G.Chat.Print("= \n\n")
 		// 19路盤だと、すごい長い時間かかる。
 		// genmove b
@@ -124,7 +124,7 @@ func main() {
 
 			bestmoveString := p.GetPointName(board, tIdx)
 
-			u.G.Log.Trace("<--Engine [%s] ok\n", bestmoveString)
+			u.G.Log.Notice("<--%s [%s] ok\n", config.User.Name, bestmoveString)
 			u.G.Chat.Print("= %s\n\n", bestmoveString)
 		// play b a3
 		// play w d4
@@ -164,11 +164,11 @@ func main() {
 				presenter.PrintBoardHeader(board, e.MovesNum)
 				presenter.PrintBoard(board)
 
-				u.G.Log.Trace("<--Engine ok\n")
+				u.G.Log.Notice("<--%s ok\n", config.User.Name)
 				u.G.Chat.Print("= \n\n")
 			}
 		default:
-			u.G.Log.Trace("<--Engine Unimplemented '%s' command\n", tokens[0])
+			u.G.Log.Notice("<--%s Unimplemented '%s' command\n", config.User.Name, tokens[0])
 			u.G.Chat.Print("? unknown_command\n\n")
 		}
 	}
