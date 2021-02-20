@@ -9,45 +9,50 @@ import (
 	"strings"
 )
 
-// IBoard - 盤
-type IBoard interface {
-	// 盤について
-	CopyData() []int
-	ImportData(boardCopy2 []int)
-	BoardSize() int
-	// SentinelWidth - 枠付きの盤の一辺の交点数
-	SentinelWidth() int
-	SentinelBoardMax() int
+// // IBoard - 盤
+// type IBoard interface {
+// 	// 盤について
+// 	CopyData() []int
+// 	ImportData(boardCopy2 []int)
+// 	BoardSize() int
+// 	// SentinelWidth - 枠付きの盤の一辺の交点数
+// 	SentinelWidth() int
+// 	SentinelBoardMax() int
 
-	// 交点について
-	// 指定した交点の石の色
-	ColorAt(tIdx int) int
-	ColorAtXy(x int, y int) int
-	SetColor(tIdx int, color int)
-	Exists(tIdx int) bool
-	// 石を置きます。
-	PutStone(tIdx int, color int, fillEyeErr int) int
-	// GetTIdxFromXy - YX形式の座標を、tIdx（配列のインデックス）へ変換します。
-	GetTIdxFromXy(x int, y int) int
-	// GetNameFromTIdx -
-	GetNameFromTIdx(tIdx int) string
+// 	// 交点について
+// 	// 指定した交点の石の色
+// 	ColorAt(tIdx int) int
+// 	ColorAtXy(x int, y int) int
+// 	SetColor(tIdx int, color int)
+// 	Exists(tIdx int) bool
+// 	// 石を置きます。
+// 	PutStone(tIdx int, color int, fillEyeErr int) int
+// 	// GetTIdxFromXy - YX形式の座標を、tIdx（配列のインデックス）へ変換します。
+// 	GetTIdxFromXy(x int, y int) int
+// 	// GetNameFromTIdx -
+// 	GetNameFromTIdx(tIdx int) string
 
-	// 検索について
-	GetEmptyTIdx() int
+// 	// 検索について
+// 	GetEmptyTIdx() int
 
-	// 呼吸点について
-	CountLiberty(tIdx int, pLiberty *int, pStone *int)
+// 	// 呼吸点について
+// 	CountLiberty(tIdx int, pLiberty *int, pStone *int)
 
-	// ゲーム操作について
-	// AddMoves - 指し手の追加？
-	AddMoves(tIdx int, color int, sec float64, printBoardType2 func(IBoard, int))
-	TakeStone(tIdx int, color int)
+// 	// ゲーム操作について
+// 	// AddMoves - 指し手の追加？
+// 	AddMoves(tIdx int, color int, sec float64, printBoardType2 func(*IBoard, int))
+// 	TakeStone(tIdx int, color int)
 
-	// ゲームについて
-	// 6.5 といった数字を入れるだけ。実行速度優先で 64bitに。
-	Komi() float64
-	MaxMoves() int
-}
+// 	// ゲームについて
+// 	// 6.5 といった数字を入れるだけ。実行速度優先で 64bitに。
+// 	Komi() float64
+// 	MaxMoves() int
+
+// 	// KoIdx - コウの交点。Idx（配列のインデックス）表示。 0 ならコウは無し？
+// 	KoIdx() int
+// 	// SetKoIdx - コウの交点。Idx（配列のインデックス）表示。 0 ならコウは無し？
+// 	SetKoIdx(koIdx int)
+// }
 
 // Record - 棋譜
 var Record []int
@@ -65,9 +70,6 @@ const (
 	MayFillEye = 0
 )
 
-// KoIdx - コウの交点。Idx（配列のインデックス）表示。 0 ならコウは無し？
-var KoIdx int
-
 // For count liberty.
 var checkBoard = []int{}
 
@@ -78,12 +80,17 @@ var labelOfColumns = []string{"A", "B", "C", "D", "E", "F", "G", "H", "J", "K", 
 
 // Board - 盤。
 type Board struct {
+	// IBoard
+
 	data             []int
 	boardSize        int
 	sentinelWidth    int
 	sentinelBoardMax int
 	komi             float64
 	maxMoves         int
+
+	// KoIdx - コウの交点。Idx（配列のインデックス）表示。 0 ならコウは無し？
+	KoIdx int
 }
 
 // BoardSize - 何路盤か
@@ -387,7 +394,7 @@ func (board *Board) InitBoard() {
 	}
 
 	MovesCount = 0
-	KoIdx = 0
+	board.KoIdx = 0
 }
 
 // PutStone - 石を置きます
@@ -402,7 +409,7 @@ func (board *Board) PutStone(tIdx int, color int, fillEyeErr int) int {
 	koMaybe := 0
 
 	if tIdx == 0 {
-		KoIdx = 0
+		board.KoIdx = 0
 		return 0
 	}
 	for dir := 0; dir < 4; dir++ {
@@ -436,7 +443,7 @@ func (board *Board) PutStone(tIdx int, color int, fillEyeErr int) int {
 	if captureSum == 0 && space == 0 && mycolSafe == 0 {
 		return 1
 	}
-	if tIdx == KoIdx {
+	if tIdx == board.KoIdx {
 		return 2
 	}
 	if wall+mycolSafe == 4 && fillEyeErr == DoNotFillEye {
@@ -459,16 +466,16 @@ func (board *Board) PutStone(tIdx int, color int, fillEyeErr int) int {
 	board.CountLiberty(tIdx, &liberty, &stone)
 
 	if captureSum == 1 && stone == 1 && liberty == 1 {
-		KoIdx = koMaybe
+		board.KoIdx = koMaybe
 	} else {
-		KoIdx = 0
+		board.KoIdx = 0
 	}
 	return 0
 }
 
 // AddMoves - 指し手の追加？
-func (board *Board) AddMoves(tIdx int, color int, sec float64, printBoardType2 func(IBoard, int)) {
-	err := board.PutStone(tIdx, color, MayFillEye)
+func (board *Board) AddMoves(tIdx int, color int, sec float64, printBoardType2 func(*Board, int)) {
+	err := (*board).PutStone(tIdx, color, MayFillEye)
 	if err != 0 {
 		fmt.Fprintf(os.Stderr, "(AddMoves) Err=%d\n", err)
 		os.Exit(0)

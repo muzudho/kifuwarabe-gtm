@@ -43,7 +43,7 @@ var stoneLabelsType1 = [4]string{"・", " ●", " ○", "＃"}
 var stoneLabelsType2 = [4]string{" .", " *", " o", " #"}
 
 // PrintBoardType1 - 盤の描画。
-func (presenter *presenterV9a) PrintBoardType1(board e.IBoard) {
+func (presenter *presenterV9a) PrintBoardType1(board *e.Board) {
 	boardSize := board.BoardSize()
 
 	fmt.Printf("\n   ")
@@ -70,8 +70,8 @@ func (presenter *presenterV9a) PrintBoardType1(board e.IBoard) {
 }
 
 // PrintBoardType2 - 盤の描画。
-func printBoardType2(board e.IBoard, moves int) {
-	boardSize := board.BoardSize()
+func printBoardType2(board *e.Board, moves int) {
+	boardSize := (*board).BoardSize()
 
 	fmt.Printf("\n   ")
 	for x := 0; x < boardSize; x++ {
@@ -85,11 +85,11 @@ func printBoardType2(board e.IBoard, moves int) {
 	for y := 0; y < boardSize; y++ {
 		fmt.Printf("%s|", labelOfRowsV1[y+1])
 		for x := 0; x < boardSize; x++ {
-			fmt.Printf("%s", stoneLabelsType1[board.ColorAtXy(x, y)])
+			fmt.Printf("%s", stoneLabelsType1[(*board).ColorAtXy(x, y)])
 		}
 		fmt.Printf("|")
 		if y == 4 {
-			fmt.Printf("  Ko=%s,moves=%d", board.GetNameFromTIdx(e.KoIdx), moves)
+			fmt.Printf("  Ko=%s,moves=%d", (*board).GetNameFromTIdx(board.KoIdx), moves)
 		}
 		fmt.Printf("\n")
 	}
@@ -101,8 +101,8 @@ func printBoardType2(board e.IBoard, moves int) {
 }
 
 // PrintBoardType2 - 盤を描画。
-func (presenter *presenterV9a) PrintBoardType2(board e.IBoard, moves int) {
-	boardSize := board.BoardSize()
+func (presenter *presenterV9a) PrintBoardType2(board *e.Board, moves int) {
+	boardSize := (*board).BoardSize()
 
 	fmt.Fprintf(os.Stderr, "\n   ")
 	for x := 0; x < boardSize; x++ {
@@ -116,11 +116,11 @@ func (presenter *presenterV9a) PrintBoardType2(board e.IBoard, moves int) {
 	for y := 0; y < boardSize; y++ {
 		fmt.Fprintf(os.Stderr, "%s|", labelOfRowsV9a[y+1])
 		for x := 0; x < boardSize; x++ {
-			fmt.Fprintf(os.Stderr, "%s", stoneLabelsType2[board.ColorAtXy(x, y)])
+			fmt.Fprintf(os.Stderr, "%s", stoneLabelsType2[(*board).ColorAtXy(x, y)])
 		}
 		fmt.Fprintf(os.Stderr, "|")
 		if y == 4 {
-			fmt.Fprintf(os.Stderr, "  Ko=%s,moves=%d", board.GetNameFromTIdx(e.KoIdx), moves)
+			fmt.Fprintf(os.Stderr, "  Ko=%s,moves=%d", (*board).GetNameFromTIdx(board.KoIdx), moves)
 		}
 		fmt.Fprintf(os.Stderr, "\n")
 	}
@@ -132,7 +132,7 @@ func (presenter *presenterV9a) PrintBoardType2(board e.IBoard, moves int) {
 }
 
 // PrintSgf - SGF形式の棋譜表示。
-func PrintSgf(board e.IBoard, moves int, record []int) {
+func PrintSgf(board *e.Board, moves int, record []int) {
 	boardSize := board.BoardSize()
 
 	fmt.Printf("(;GM[1]SZ[%d]KM[%.1f]PB[]PW[]\n", boardSize, board.Komi())
@@ -155,15 +155,15 @@ func PrintSgf(board e.IBoard, moves int, record []int) {
 }
 
 // GetPointName - YX座標の文字表示？ A1 とか
-func GetPointName(board e.IBoard, tIdx int) string {
+func GetPointName(board *e.Board, tIdx int) string {
 	if tIdx == 0 {
 		return "pass"
 	}
 
 	// boardSize := board.BoardSize()
 
-	y := tIdx / board.SentinelWidth()
-	x := tIdx - y*board.SentinelWidth()
+	y := tIdx / (*board).SentinelWidth()
+	x := tIdx - y*(*board).SentinelWidth()
 
 	ax := labelOfColumns[x]
 

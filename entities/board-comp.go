@@ -13,7 +13,7 @@ var AllPlayouts int
 var UctChildrenSize int
 
 // Playout - 最後まで石を打ちます。得点を返します。
-func Playout(board *IBoard, turnColor int, printBoardType1 func(IBoard)) int {
+func (board *Board) Playout(turnColor int, printBoardType1 func(*Board)) int {
 	boardSize := (*board).BoardSize()
 
 	color := turnColor
@@ -56,13 +56,13 @@ func Playout(board *IBoard, turnColor int, printBoardType1 func(IBoard)) int {
 		previousTIdx = tIdx
 		// printBoardType1()
 		// fmt.Printf("loop=%d,tIdx=%s,c=%d,emptyNum=%d,Ko=%s\n",
-		// 	loop, e.GetNameFromXY(tIdx), color, emptyNum, e.GetNameFromXY(KoIdx))
+		// 	loop, e.GetNameFromXY(tIdx), color, emptyNum, e.GetNameFromXY(board.KoIdx()))
 		color = FlipColor(color)
 	}
-	return countScore(board, turnColor)
+	return board.countScore(turnColor)
 }
 
-func countScore(board *IBoard, turnColor int) int {
+func (board *Board) countScore(turnColor int) int {
 	var mk = [4]int{}
 	var kind = [3]int{0, 0, 0}
 	var score, blackArea, whiteArea, blackSum, whiteSum int
@@ -107,7 +107,7 @@ func countScore(board *IBoard, turnColor int) int {
 }
 
 // PrimitiveMonteCalro - モンテカルロ木探索 Version 9a.
-func PrimitiveMonteCalro(board *IBoard, color int, printBoardType1 func(IBoard)) int {
+func (board *Board) PrimitiveMonteCalro(color int, printBoardType1 func(*Board)) int {
 	boardSize := (*board).BoardSize()
 
 	// ９路盤なら
@@ -117,7 +117,7 @@ func PrimitiveMonteCalro(board *IBoard, color int, printBoardType1 func(IBoard))
 	bestTIdx := 0
 	var bestValue, winRate float64
 	var boardCopy = (*board).CopyData()
-	koZCopy := KoIdx
+	koZCopy := board.KoIdx
 	bestValue = -100.0
 
 	for y := 0; y <= boardSize; y++ {
@@ -134,12 +134,12 @@ func PrimitiveMonteCalro(board *IBoard, color int, printBoardType1 func(IBoard))
 			winSum := 0
 			for i := 0; i < tryNum; i++ {
 				var boardCopy2 = (*board).CopyData()
-				koZCopy2 := KoIdx
+				koZCopy2 := board.KoIdx
 
-				win := -Playout(board, FlipColor(color), printBoardType1)
+				win := -board.Playout(FlipColor(color), printBoardType1)
 
 				winSum += win
-				KoIdx = koZCopy2
+				board.KoIdx = koZCopy2
 				(*board).ImportData(boardCopy2)
 			}
 			winRate = float64(winSum) / float64(tryNum)
@@ -148,7 +148,7 @@ func PrimitiveMonteCalro(board *IBoard, color int, printBoardType1 func(IBoard))
 				bestTIdx = z
 				// fmt.Printf("(primitiveMonteCalroV9) bestTIdx=%s,color=%d,v=%5.3f,tryNum=%d\n", bestTIdx, color, bestValue, tryNum)
 			}
-			KoIdx = koZCopy
+			board.KoIdx = koZCopy
 			(*board).ImportData(boardCopy)
 		}
 	}
@@ -156,11 +156,11 @@ func PrimitiveMonteCalro(board *IBoard, color int, printBoardType1 func(IBoard))
 }
 
 // GetComputerMove - コンピューターの指し手。
-func GetComputerMove(board *IBoard, color int, fUCT int, printBoardType1 func(IBoard)) int {
+func GetComputerMove(board *Board, color int, fUCT int, printBoardType1 func(*Board)) int {
 	var tIdx int
 	start := time.Now()
 	AllPlayouts = 0
-	tIdx = PrimitiveMonteCalro(board, color, printBoardType1)
+	tIdx = board.PrimitiveMonteCalro(color, printBoardType1)
 	sec := time.Since(start).Seconds()
 	fmt.Printf("(GetComputerMove) %.1f sec, %.0f playout/sec, play=%s,moves=%d,color=%d,playouts=%d,fUCT=%d\n",
 		sec, float64(AllPlayouts)/sec, (*board).GetNameFromTIdx(tIdx), MovesCount, color, AllPlayouts, fUCT)
