@@ -6,6 +6,9 @@ import (
 	"time"
 )
 
+// AllPlayouts - プレイアウトした回数
+var AllPlayouts int
+
 // UctChildrenSize - UCTの最大手数
 var UctChildrenSize int
 

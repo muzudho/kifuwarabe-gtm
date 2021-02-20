@@ -60,9 +60,6 @@ type IPresenter interface {
 	PrintBoardType2(board IBoard, moves int)
 }
 
-// AllPlayouts - プレイアウトした回数
-var AllPlayouts int
-
 // Record - 棋譜？
 var Record []int
 
