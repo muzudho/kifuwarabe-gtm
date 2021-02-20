@@ -17,7 +17,7 @@ func PlayComputerMove(board e.IBoard, color int, fUCT int, printBoardType1 func(
 	sec := time.Since(st).Seconds()
 	fmt.Fprintf(os.Stderr, "%.1f sec, %.0f playout/sec, play=%s,moves=%d,color=%d,playouts=%d,fUCT=%d\n",
 		sec, float64(e.AllPlayouts)/sec, board.GetNameFromTIdx(tIdx), e.Moves, color, e.AllPlayouts, fUCT)
-	board.AddMovesType2(tIdx, color, sec, printBoardType2)
+	board.AddMoves(tIdx, color, sec, printBoardType2)
 	return tIdx
 }
 

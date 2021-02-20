@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 	"os"
@@ -36,10 +37,8 @@ type IBoard interface {
 	GetComputerMove(color int, fUCT int, printBoardType1 func(IBoard)) int
 	// Monte Calro Tree Search
 	PrimitiveMonteCalro(color int, printBoardType1 func(IBoard)) int
-	// AddMovesType1 - 指し手の追加？
-	AddMovesType1(tIdx int, color int, printBoardType2 func(IBoard, int))
-	// AddMovesType2 - 指し手の追加？
-	AddMovesType2(tIdx int, color int, sec float64, printBoardType2 func(IBoard, int))
+	// AddMoves - 指し手の追加？
+	AddMoves(tIdx int, color int, sec float64, printBoardType2 func(IBoard, int))
 
 	BoardSize() int
 	// SentinelWidth - 枠付きの盤の一辺の交点数
@@ -222,12 +221,9 @@ func (board Board) GetEmptyTIdx() int {
 }
 
 // GetXYFromName - "A1" を (1,1) に変換します
-func GetXYFromName(name string) (int, int) {
-	// fmt.Fprintf(os.Stderr, "ax=%s\n", ax)
-	//u.G.Log.Trace("<Engine> name=%s\n", name)
-
+func GetXYFromName(name string) (int, int, error) {
 	if name == "Pass" {
-		return 0, 0
+		return 0, 0, nil
 	}
 
 	regexCoord := *regexp.MustCompile("([A-Za-z])(\\d+)")
@@ -238,10 +234,9 @@ func GetXYFromName(name string) (int, int) {
 	if 1 < len(matches211) {
 		xStr = strings.ToUpper(string(matches211[1]))
 		yStr = string(matches211[2])
-		//u.G.Chat.Trace("<Engine> xStr=[%s] yStr=[%s]\n", xStr, yStr)
 	} else {
 		message := fmt.Sprintf("Unexpected name=[%s]", name)
-		panic(message)
+		return 0, 0, errors.New(message)
 	}
 
 	var x int
@@ -286,7 +281,7 @@ func GetXYFromName(name string) (int, int) {
 		x = 18
 	default:
 		message := fmt.Sprintf("Unexpected xStr=[%s]", xStr)
-		panic(message)
+		return 0, 0, errors.New(message)
 	}
 
 	var y int
@@ -331,12 +326,10 @@ func GetXYFromName(name string) (int, int) {
 		y = 18
 	default:
 		message := fmt.Sprintf("Unexpected yStr=[%s]", yStr)
-		panic(message)
+		return 0, 0, errors.New(message)
 	}
 
-	//u.G.Log.Trace("<Engine> x=%d y=%d\n", x, y)
-
-	return x, y
+	return x, y, nil
 }
 
 // NewBoard - 盤を作成します。
@@ -379,7 +372,6 @@ func (board Board) countLibertySub(tIdx int, color int, pLiberty *int, pStone *i
 			board.countLibertySub(z, color, pLiberty, pStone)
 		}
 	}
-
 }
 
 // CountLiberty - 呼吸点を数えます。
@@ -405,35 +397,28 @@ func (board *Board) TakeStone(tIdx int, color int) {
 	}
 }
 
-// InitBoard - 盤の初期化。
+// InitBoard - 盤の初期化
 func (board *Board) InitBoard() {
 	boardMax := board.SentinelBoardMax()
 	boardSize := board.BoardSize()
-	// G.Log.Trace("<Engine> (^q^) boardMax=%d boardSize=%d\n", boardMax, boardSize)
 
-	// 枠線
+	// 盤を 枠線　で埋めます
 	for tIdx := 0; tIdx < boardMax; tIdx++ {
 		board.SetColor(tIdx, 3)
 	}
 
-	// G.Log.Trace("<Engine> (^q^) 盤を 3 で埋めた☆\n")
-
-	// 盤上
+	// 盤上に石を置きます
 	for y := 0; y < boardSize; y++ {
 		for x := 0; x < boardSize; x++ {
 			board.SetColor(board.GetTIdxFromXy(x, y), 0)
 		}
 	}
 
-	// G.Log.Trace("<Engine> (^q^) 石は置いた☆\n")
-
 	Moves = 0
 	KoIdx = 0
-
-	// G.Log.Trace("<Engine> (^q^) 盤の初期化は終わったぜ☆\n")
 }
 
-// PutStone - 石を置きます。
+// PutStone - 石を置きます
 func (board *Board) PutStone(tIdx int, color int, fillEyeErr int) int {
 	var around = [4][3]int{}
 	var liberty, stone int
@@ -509,7 +494,7 @@ func (board *Board) PutStone(tIdx int, color int, fillEyeErr int) int {
 	return 0
 }
 
-func countScoreV7(board IBoard, turnColor int) int {
+func countScore(board IBoard, turnColor int) int {
 	var mk = [4]int{}
 	var kind = [3]int{0, 0, 0}
 	var score, blackArea, whiteArea, blackSum, whiteSum int
@@ -600,7 +585,7 @@ func (board *Board) Playout(turnColor int, printBoardType1 func(IBoard)) int {
 		// 	loop, e.GetNameFromXY(tIdx), color, emptyNum, e.GetNameFromXY(KoIdx))
 		color = FlipColor(color)
 	}
-	return countScoreV7(board, turnColor)
+	return countScore(board, turnColor)
 }
 
 // PrimitiveMonteCalro - モンテカルロ木探索 Version 9a.
@@ -652,23 +637,11 @@ func (board *Board) PrimitiveMonteCalro(color int, printBoardType1 func(IBoard))
 	return bestTIdx
 }
 
-// AddMovesType1 - GoGoV8 から呼び出されます。
-func (board *Board) AddMovesType1(tIdx int, color int, printBoardType2 func(IBoard, int)) {
+// AddMoves - 指し手の追加？
+func (board *Board) AddMoves(tIdx int, color int, sec float64, printBoardType2 func(IBoard, int)) {
 	err := board.PutStone(tIdx, color, FillEyeOk)
 	if err != 0 {
-		fmt.Println("(AddMovesV8) Err!", err)
-		os.Exit(0)
-	}
-	Record[Moves] = tIdx
-	Moves++
-	printBoardType2(board, Moves)
-}
-
-// AddMovesType2 - 指し手の追加？
-func (board *Board) AddMovesType2(tIdx int, color int, sec float64, printBoardType2 func(IBoard, int)) {
-	err := board.PutStone(tIdx, color, FillEyeOk)
-	if err != 0 {
-		fmt.Fprintf(os.Stderr, "(AddMovesType2) Err=%d\n", err)
+		fmt.Fprintf(os.Stderr, "(AddMoves) Err=%d\n", err)
 		os.Exit(0)
 	}
 	Record[Moves] = tIdx

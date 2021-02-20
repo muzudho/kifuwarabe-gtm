@@ -6,7 +6,6 @@ package main
 import (
 	"bufio"
 	"flag"
-	"fmt"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -23,9 +22,7 @@ func main() {
 	// Working directory
 	wdir, err := os.Getwd()
 	if err != nil {
-		message := fmt.Sprintf("<Engine> wdir=%s", wdir)
-		u.G.Log.Fatal(message)
-		panic(message)
+		panic(u.G.Log.Fatal("<Engine> wdir=%s", wdir))
 	}
 
 	// コマンドライン引数
@@ -151,14 +148,16 @@ func main() {
 					tIdx = 0
 					u.G.Log.Trace("<Engine> Pass\n")
 				} else {
-					x, y := e.GetXYFromName(tokens[2])
+					x, y, err := e.GetXYFromName(tokens[2])
+					if err != nil {
+						panic(err)
+					}
 
 					tIdx = board.GetTIdxFromXy(x, y)
 
-					// fmt.Fprintf(os.Stderr, "x=%d y=%d\n", x, y)
 					u.G.Log.Trace("<Engine> x=%d y=%d\n", x, y)
 				}
-				board.AddMovesType2(tIdx, color, 0, presenter.PrintBoardType2)
+				board.AddMoves(tIdx, color, 0, presenter.PrintBoardType2)
 
 				u.G.Log.Trace("<Engine> 'play' に対応して空行を返すぜ（＾～＾）\n")
 				u.G.Chat.Print("= \n\n")

@@ -14,8 +14,7 @@ func LoadEntryConf(path string) e.EntryConf {
 	// ファイル読込
 	fileData, err := ioutil.ReadFile(path)
 	if err != nil {
-		u.G.Log.Fatal("path=%s", path)
-		panic(err)
+		panic(u.G.Log.Fatal("path=%s err=%s", path, err))
 	}
 
 	debugPrintToml(fileData)
