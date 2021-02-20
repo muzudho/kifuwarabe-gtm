@@ -6,10 +6,11 @@ import (
 	"time"
 
 	e "github.com/muzudho/kifuwarabe-gtp/entities"
+	"github.com/muzudho/kifuwarabe-gtp/presenter"
 )
 
-// PlayComputerMove - コンピューター・プレイヤーの指し手。 GoGoV9a から呼び出されます。
-func PlayComputerMove(board *e.Board, color int, fUCT int, printBoardType1 func(*e.Board), printBoardType2 func(*e.Board, int)) int {
+// PlayComputerMove - コンピューター・プレイヤーの指し手。 main から呼び出されます。
+func PlayComputerMove(board *e.Board, color int, fUCT int, printBoardType1 func(*e.Board)) int {
 	var tIdx int
 	st := time.Now()
 	e.AllPlayouts = 0
@@ -17,7 +18,11 @@ func PlayComputerMove(board *e.Board, color int, fUCT int, printBoardType1 func(
 	sec := time.Since(st).Seconds()
 	fmt.Fprintf(os.Stderr, "%.1f sec, %.0f playout/sec, play=%s,moves=%d,color=%d,playouts=%d,fUCT=%d\n",
 		sec, float64(e.AllPlayouts)/sec, (*board).GetNameFromTIdx(tIdx), e.MovesCount, color, e.AllPlayouts, fUCT)
-	(*board).AddMoves(tIdx, color, sec, printBoardType2)
+
+	(*board).AddMoves(tIdx, color, sec)
+	presenter.PrintBoardHeader(board, e.MovesCount)
+	presenter.PrintBoardType2(board, e.MovesCount)
+
 	return tIdx
 }
 

@@ -280,7 +280,7 @@ func (board Board) countLibertySub(tIdx int, color int, pLiberty *int, pStone *i
 }
 
 // AddMoves - 指し手の追加？
-func (board *Board) AddMoves(tIdx int, color int, sec float64, printBoardType2 func(*Board, int)) {
+func (board *Board) AddMoves(tIdx int, color int, sec float64) {
 	err := (*board).PutStone(tIdx, color, MayFillEye)
 	if err != 0 {
 		fmt.Fprintf(os.Stderr, "(AddMoves) Err=%d\n", err)
@@ -289,7 +289,6 @@ func (board *Board) AddMoves(tIdx int, color int, sec float64, printBoardType2 f
 	Record[MovesCount] = tIdx
 	RecordTime[MovesCount] = sec
 	MovesCount++
-	printBoardType2(board, MovesCount)
 }
 
 // Komi - コミ

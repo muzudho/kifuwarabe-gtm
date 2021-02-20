@@ -68,7 +68,7 @@ func main() {
 	u.G.Log.Trace("<Engine> board.BoardSize()=%d\n", board.BoardSize())
 	u.G.Log.Trace("<Engine> board.SentinelBoardMax()=%d\n", board.SentinelBoardMax())
 
-	presenter := new(presenter.BoardView)
+	boardView := new(presenter.BoardView)
 
 	rand.Seed(time.Now().UnixNano())
 	board.InitBoard()
@@ -119,7 +119,7 @@ func main() {
 			if 1 < len(tokens) && strings.ToLower(tokens[1]) == "w" {
 				color = 2
 			}
-			tIdx := u.PlayComputerMove(board, color, 1, presenter.PrintBoardType1, presenter.PrintBoardType2)
+			tIdx := u.PlayComputerMove(board, color, 1, boardView.PrintBoardType1)
 
 			bestmoveString := p.GetPointName(board, tIdx)
 
@@ -161,7 +161,9 @@ func main() {
 
 					u.G.Log.Trace("<Engine> x=%d y=%d\n", x, y)
 				}
-				board.AddMoves(tIdx, color, 0, presenter.PrintBoardType2)
+				board.AddMoves(tIdx, color, 0)
+				presenter.PrintBoardHeader(board, e.MovesCount)
+				presenter.PrintBoardType2(board, e.MovesCount)
 
 				u.G.Log.Trace("<Engine> 'play' に対応して空行を返すぜ（＾～＾）\n")
 				u.G.Chat.Print("= \n\n")
