@@ -149,7 +149,7 @@ func main() {
 				var tIdx int
 				if strings.ToLower(tokens[2]) == "pass" {
 					tIdx = 0
-					// u.G.Log.Trace("...Engine Pass\n")
+					// u.G.Log.Trace("...Engine pass\n")
 				} else {
 					x, y, err := e.GetXYFromName(tokens[2])
 					if err != nil {

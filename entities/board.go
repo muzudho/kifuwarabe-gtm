@@ -313,7 +313,7 @@ func (board Board) GetFileRankFromTIdx(tIdx int) (int, int) {
 
 // GetXYFromName - "A1" を (1,1) に変換します
 func GetXYFromName(name string) (int, int, error) {
-	if name == "Pass" {
+	if name == "pass" {
 		return 0, 0, nil
 	}
 
