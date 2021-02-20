@@ -13,7 +13,7 @@ func PlayComputerMove(board e.IBoard, color int, fUCT int, printBoardType1 func(
 	var tIdx int
 	st := time.Now()
 	e.AllPlayouts = 0
-	tIdx = board.PrimitiveMonteCalro(color, printBoardType1)
+	tIdx = e.PrimitiveMonteCalro(&board, color, printBoardType1)
 	sec := time.Since(st).Seconds()
 	fmt.Fprintf(os.Stderr, "%.1f sec, %.0f playout/sec, play=%s,moves=%d,color=%d,playouts=%d,fUCT=%d\n",
 		sec, float64(e.AllPlayouts)/sec, board.GetNameFromTIdx(tIdx), e.MovesCount, color, e.AllPlayouts, fUCT)

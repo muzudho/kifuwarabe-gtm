@@ -26,16 +26,10 @@ type IBoard interface {
 	// 石を置きます。
 	PutStone(tIdx int, color int, fillEyeErr int) int
 
-	// Playout - 最後まで石を打ちます。
-	Playout(turnColor int, printBoardType1 func(IBoard)) int
 	CountLiberty(tIdx int, pLiberty *int, pStone *int)
 	TakeStone(tIdx int, color int)
 	GetEmptyTIdx() int
 
-	// GetComputerMove - コンピューターの指し手。
-	GetComputerMove(color int, fUCT int, printBoardType1 func(IBoard)) int
-	// Monte Calro Tree Search
-	PrimitiveMonteCalro(color int, printBoardType1 func(IBoard)) int
 	// AddMoves - 指し手の追加？
 	AddMoves(tIdx int, color int, sec float64, printBoardType2 func(IBoard, int))
 
@@ -48,9 +42,6 @@ type IBoard interface {
 	MaxMoves() int
 	// GetTIdxFromXy - YX形式の座標を、tIdx（配列のインデックス）へ変換します。
 	GetTIdxFromXy(x int, y int) int
-
-	// GetZ4 - tIdx（配列のインデックス）を XXYY形式へ変換します。
-	// GetZ4(tIdx int) int
 }
 
 // IPresenter - 表示用
