@@ -126,13 +126,15 @@ func (board Board) SentinelBoardMax() int {
 // ⚡ 交点について
 
 // ColorAt - 指定した交点の石の色
-func (board Board) ColorAt(z int) int {
-	return board.data[z]
+func (board Board) ColorAt(tIdx int) int {
+	return board.data[tIdx]
 }
 
-// ColorAtXy - 指定した交点の石の色
-func (board Board) ColorAtXy(x int, y int) int {
-	return board.data[(y+1)*board.sentinelWidth+x+1]
+// ColorAtFileRank - 指定した交点の石の色
+// * `file` - 1 Origin.
+// * `rank` - 1 Origin.
+func (board Board) ColorAtFileRank(file int, rank int) int {
+	return board.data[rank*board.sentinelWidth+file]
 }
 
 // SetColor - 盤データ。

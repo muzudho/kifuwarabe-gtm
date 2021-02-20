@@ -58,7 +58,7 @@ func (presenter *presenterV9a) PrintBoardType1(board *e.Board) {
 	for y := 0; y < boardSize; y++ {
 		fmt.Printf("%s|", labelOfRowsV1[y+1])
 		for x := 0; x < boardSize; x++ {
-			fmt.Printf("%s", stoneLabelsType1[board.ColorAtXy(x, y)])
+			fmt.Printf("%s", stoneLabelsType1[board.ColorAtFileRank(x+1, y+1)])
 		}
 		fmt.Printf("|\n")
 	}
@@ -85,7 +85,7 @@ func printBoardType2(board *e.Board, moves int) {
 	for y := 0; y < boardSize; y++ {
 		fmt.Printf("%s|", labelOfRowsV1[y+1])
 		for x := 0; x < boardSize; x++ {
-			fmt.Printf("%s", stoneLabelsType1[(*board).ColorAtXy(x, y)])
+			fmt.Printf("%s", stoneLabelsType1[(*board).ColorAtFileRank(x+1, y+1)])
 		}
 		fmt.Printf("|")
 		if y == 4 {
@@ -116,7 +116,7 @@ func (presenter *presenterV9a) PrintBoardType2(board *e.Board, moves int) {
 	for y := 0; y < boardSize; y++ {
 		fmt.Fprintf(os.Stderr, "%s|", labelOfRowsV9a[y+1])
 		for x := 0; x < boardSize; x++ {
-			fmt.Fprintf(os.Stderr, "%s", stoneLabelsType2[(*board).ColorAtXy(x, y)])
+			fmt.Fprintf(os.Stderr, "%s", stoneLabelsType2[(*board).ColorAtFileRank(x+1, y+1)])
 		}
 		fmt.Fprintf(os.Stderr, "|")
 		if y == 4 {
