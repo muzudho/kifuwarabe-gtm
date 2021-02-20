@@ -2,9 +2,10 @@ package presenter
 
 import (
 	"fmt"
-	"os"
+	"strings"
 
 	e "github.com/muzudho/kifuwarabe-gtp/entities"
+	u "github.com/muzudho/kifuwarabe-gtp/usecases"
 )
 
 // BoardView - 表示機能 Version 9a.
@@ -24,68 +25,44 @@ var labelOfRows = [20]string{" 0", " 1", " 2", " 3", " 4", " 5", " 6", " 7", " 8
 // " ○" - Visual Studio Code の 全角半角崩れ対応。
 var stoneLabels = [4]string{" .", " x", " o", " #"}
 
-// PrintBoardType1 - 盤の描画。
-func (presenter *BoardView) PrintBoardType1(board *e.Board) {
-	boardSize := board.BoardSize()
-
-	fmt.Printf("\n   ")
-	for x := 0; x < boardSize; x++ {
-		fmt.Printf(" %c", labelOfColumns[x+1])
-	}
-	fmt.Printf("\n  +")
-	for x := 0; x < boardSize; x++ {
-		fmt.Printf("--")
-	}
-	fmt.Printf("+\n")
-	for y := 0; y < boardSize; y++ {
-		fmt.Printf("%s|", labelOfRows[y+1])
-		for x := 0; x < boardSize; x++ {
-			fmt.Printf("%s", stoneLabels[board.ColorAtFileRank(x+1, y+1)])
-		}
-		fmt.Printf("|\n")
-	}
-	fmt.Printf("  +")
-	for x := 0; x < boardSize; x++ {
-		fmt.Printf("--")
-	}
-	fmt.Printf("+\n")
-}
-
 // PrintBoardHeader - 手数などを表示
 func PrintBoardHeader(board *e.Board, moves int) {
-	fmt.Fprintf(os.Stderr, "[ Ko=%s MovesNum=%d ]\n", (*board).GetNameFromTIdx(board.KoIdx), moves)
+	u.G.StderrChat.Info("[ Ko=%s MovesNum=%d ]\n", (*board).GetNameFromTIdx(board.KoIdx), moves)
 }
 
-// PrintBoardType2 - 盤を描画。
-// 盤は標準出力ではなく、標準エラー出力に出力するので、 GTP2NNGS に送信されません。
-func PrintBoardType2(board *e.Board, moves int) {
+// PrintBoard - 盤を描画
+func PrintBoard(board *e.Board) {
 	boardSize := (*board).BoardSize()
 
-	fmt.Fprintf(os.Stderr, "\n   ")
+	var b strings.Builder
+	b.Grow(3 * boardSize) // だいたい適当
+
+	b.WriteString("\n   ")
 	for x := 0; x < boardSize; x++ {
-		fmt.Fprintf(os.Stderr, " %c", labelOfColumns[x+1])
+		b.WriteString(fmt.Sprintf(" %c", labelOfColumns[x+1]))
 	}
-	fmt.Fprintf(os.Stderr, "\n  +")
+	b.WriteString("\n  +")
 	for x := 0; x < boardSize; x++ {
-		fmt.Fprintf(os.Stderr, "--")
+		b.WriteString("--")
 	}
-	fmt.Fprintf(os.Stderr, "+\n")
+	b.WriteString("+\n")
 	for y := 0; y < boardSize; y++ {
-		fmt.Fprintf(os.Stderr, "%s|", labelOfRows[y+1])
+		b.WriteString(fmt.Sprintf("%s|", labelOfRows[y+1]))
 		for x := 0; x < boardSize; x++ {
-			fmt.Fprintf(os.Stderr, "%s", stoneLabels[(*board).ColorAtFileRank(x+1, y+1)])
+			b.WriteString(fmt.Sprintf("%s", stoneLabels[(*board).ColorAtFileRank(x+1, y+1)]))
 		}
-		fmt.Fprintf(os.Stderr, "|")
-		fmt.Fprintf(os.Stderr, "\n")
+		b.WriteString("|\n")
 	}
-	fmt.Fprintf(os.Stderr, "  +")
+	b.WriteString("  +")
 	for x := 0; x < boardSize; x++ {
-		fmt.Fprintf(os.Stderr, "--")
+		b.WriteString("--")
 	}
-	fmt.Fprintf(os.Stderr, "+\n")
+	b.WriteString("+\n")
+
+	u.G.StderrChat.Info(b.String())
 }
 
-// PrintSgf - SGF形式の棋譜表示。
+// PrintSgf - SGF形式の棋譜表示
 func PrintSgf(board *e.Board, moves int, record []int) {
 	boardSize := board.BoardSize()
 

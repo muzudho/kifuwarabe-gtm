@@ -58,6 +58,7 @@ func main() {
 
 	// チャッターの作成。 標準出力とロガーを一緒にしただけです。
 	u.G.Chat = *u.NewChatter(u.G.Log)
+	u.G.StderrChat = *u.NewStderrChatter(u.G.Log)
 
 	// TODO ファイルが存在しなければ、強制終了します。
 	config := ui.LoadEntryConf(entryConfPath) // "input/default.entryConf.toml"
@@ -67,8 +68,6 @@ func main() {
 
 	u.G.Log.Trace("<Engine> board.BoardSize()=%d\n", board.BoardSize())
 	u.G.Log.Trace("<Engine> board.SentinelBoardMax()=%d\n", board.SentinelBoardMax())
-
-	boardView := new(presenter.BoardView)
 
 	rand.Seed(time.Now().UnixNano())
 	board.InitBoard()
@@ -119,7 +118,9 @@ func main() {
 			if 1 < len(tokens) && strings.ToLower(tokens[1]) == "w" {
 				color = 2
 			}
-			tIdx := u.PlayComputerMove(board, color, 1, boardView.PrintBoardType1)
+			tIdx := u.PlayComputerMove(board, color, 1, presenter.PrintBoard)
+			presenter.PrintBoardHeader(board, e.MovesNum)
+			presenter.PrintBoard(board)
 
 			bestmoveString := p.GetPointName(board, tIdx)
 
@@ -163,7 +164,7 @@ func main() {
 				}
 				board.AddMoves(tIdx, color, 0)
 				presenter.PrintBoardHeader(board, e.MovesNum)
-				presenter.PrintBoardType2(board, e.MovesNum)
+				presenter.PrintBoard(board)
 
 				u.G.Log.Trace("<Engine> 'play' に対応して空行を返すぜ（＾～＾）\n")
 				u.G.Chat.Print("= \n\n")

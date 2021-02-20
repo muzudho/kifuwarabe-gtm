@@ -6,7 +6,6 @@ import (
 	"time"
 
 	e "github.com/muzudho/kifuwarabe-gtp/entities"
-	"github.com/muzudho/kifuwarabe-gtp/presenter"
 )
 
 // PlayComputerMove - コンピューター・プレイヤーの指し手。 main から呼び出されます。
@@ -20,8 +19,6 @@ func PlayComputerMove(board *e.Board, color int, fUCT int, printBoardType1 func(
 		sec, float64(e.AllPlayouts)/sec, (*board).GetNameFromTIdx(tIdx), e.MovesNum, color, e.AllPlayouts, fUCT)
 
 	(*board).AddMoves(tIdx, color, sec)
-	presenter.PrintBoardHeader(board, e.MovesNum)
-	presenter.PrintBoardType2(board, e.MovesNum)
 
 	return tIdx
 }
