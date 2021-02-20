@@ -7,21 +7,14 @@ import (
 	"github.com/muzudho/kifuwarabe-gtp/entities/stone"
 )
 
-// EntryConf - Tomlファイル。
-type EntryConf struct {
-	Server Server
-	User   User
-	Engine Engine
+// EngineConf - Tomlファイル。
+type EngineConf struct {
+	Profile Profile
+	Engine  Engine
 }
 
-// Server - [Server] テーブル。
-type Server struct {
-	Host string
-	Port uint16
-}
-
-// User - [User] 区画。
-type User struct {
+// Profile - [Profile] 区画。
+type Profile struct {
 	// Name - 対局者名（アカウント名）
 	// Only A-Z a-z 0-9
 	// Names may be at most 10 characters long
@@ -49,7 +42,7 @@ func removeAllWhiteSpace(str string) string {
 }
 
 // GetBoardArray - 盤上の石の色の配列。
-func (config EntryConf) GetBoardArray() []int {
+func (config EngineConf) GetBoardArray() []int {
 	nodes := removeAllWhiteSpace(config.Engine.BoardData)
 	array := make([]int, len(nodes))
 	for i, s := range nodes {
@@ -71,12 +64,12 @@ func (config EntryConf) GetBoardArray() []int {
 }
 
 // BoardSize - 何路盤か。
-func (config EntryConf) BoardSize() int {
+func (config EngineConf) BoardSize() int {
 	return int(config.Engine.BoardSize)
 }
 
 // SentinelBoardMax - 枠付きの盤上の交点の数
-func (config EntryConf) SentinelBoardMax() int {
+func (config EngineConf) SentinelBoardMax() int {
 	// Width - 枠込み。
 	Width := int(config.Engine.BoardSize) + 2
 	// BoardMax - 枠込み盤の配列サイズ。
@@ -84,11 +77,11 @@ func (config EntryConf) SentinelBoardMax() int {
 }
 
 // Komi - float 32bit で足りるが、実行速度優先で float 64bit に変換して返します。
-func (config EntryConf) Komi() float64 {
+func (config EngineConf) Komi() float64 {
 	return float64(config.Engine.Komi)
 }
 
 // MaxMoves - 最大手数。
-func (config EntryConf) MaxMoves() int {
+func (config EngineConf) MaxMoves() int {
 	return int(config.Engine.MaxMoves)
 }

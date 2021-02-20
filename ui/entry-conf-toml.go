@@ -9,7 +9,7 @@ import (
 )
 
 // LoadEntryConf - ゲーム設定ファイルを読み込みます。
-func LoadEntryConf(path string) e.EntryConf {
+func LoadEntryConf(path string) e.EngineConf {
 
 	// ファイル読込
 	fileData, err := ioutil.ReadFile(path)
@@ -21,7 +21,7 @@ func LoadEntryConf(path string) e.EntryConf {
 
 	// Toml解析
 	binary := []byte(string(fileData))
-	config := e.EntryConf{}
+	config := e.EngineConf{}
 	toml.Unmarshal(binary, &config)
 
 	return config
@@ -41,12 +41,10 @@ func debugPrintToml(fileData []byte) {
 	u.G.Log.Trace("...Engine Engine.MaxMoves=%d\n", tomlTree.Get("Engine.MaxMoves").(int64))
 	u.G.Log.Trace("...Engine Engine.BoardData=%s\n", tomlTree.Get("Engine.BoardData").(string))
 }
-func debugPrintConfig(config e.EntryConf) {
+func debugPrintConfig(config e.EngineConf) {
 	u.G.Log.Trace("...Engine Memory:\n")
-	u.G.Log.Trace("...Engine Server.Host=%s\n", config.Server.Host)
-	u.G.Log.Trace("...Engine Server.Port=%d\n", config.Server.Port)
-	u.G.Log.Trace("...Engine User.Name=%s\n", config.User.Name)
-	u.G.Log.Trace("...Engine User.Pass=%s\n", config.User.Pass)
+	u.G.Log.Trace("...Engine Profile.Name=%s\n", config.Profile.Name)
+	u.G.Log.Trace("...Engine Profile.Pass=%s\n", config.Profile.Pass)
 	u.G.Log.Trace("...Engine Engine.Komi=%f\n", config.Engine.Komi)
 	u.G.Log.Trace("...Engine Engine.BoardSize=%d\n", config.Engine.BoardSize)
 	u.G.Log.Trace("...Engine Engine.MaxMoves=%d\n", config.Engine.MaxMoves)
