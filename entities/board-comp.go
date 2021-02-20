@@ -122,11 +122,11 @@ func (board *Board) PrimitiveMonteCalro(color int, printBoard func(*Board)) int 
 
 	for y := 0; y <= boardSize; y++ {
 		for x := 0; x < boardSize; x++ {
-			z := (*board).GetTIdxFromFileRank(x+1, y+1)
-			if (*board).Exists(z) {
+			tIdx := (*board).GetTIdxFromFileRank(x+1, y+1)
+			if (*board).Exists(tIdx) {
 				continue
 			}
-			err := (*board).PutStone(z, color, DoNotFillEye)
+			err := (*board).PutStone(tIdx, color, DoNotFillEye)
 			if err != 0 {
 				continue
 			}
@@ -145,7 +145,7 @@ func (board *Board) PrimitiveMonteCalro(color int, printBoard func(*Board)) int 
 			winRate = float64(winSum) / float64(tryNum)
 			if bestValue < winRate {
 				bestValue = winRate
-				bestTIdx = z
+				bestTIdx = tIdx
 				// fmt.Printf("(primitiveMonteCalroV9) bestTIdx=%s,color=%d,v=%5.3f,tryNum=%d\n", bestTIdx, color, bestValue, tryNum)
 			}
 			board.KoIdx = koZCopy

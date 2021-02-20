@@ -68,12 +68,12 @@ func PrintSgf(board *e.Board, movesNum int, record []int) {
 
 	fmt.Printf("(;GM[1]SZ[%d]KM[%.1f]PB[]PW[]\n", boardSize, board.Komi())
 	for i := 0; i < movesNum; i++ {
-		z := record[i]
-		y := z / board.SentinelWidth()
-		x := z - y*board.SentinelWidth()
+		tIdx := record[i]
+		y := tIdx / board.SentinelWidth()
+		x := tIdx - y*board.SentinelWidth()
 		var sStone = [2]string{"B", "W"}
 		fmt.Printf(";%s", sStone[i&1])
-		if z == 0 {
+		if tIdx == 0 {
 			fmt.Printf("[]")
 		} else {
 			fmt.Printf("[%c%c]", x+'a'-1, y+'a'-1)

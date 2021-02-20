@@ -31,7 +31,7 @@ var checkBoard = []int{}
 // MovesNum - 手数
 var MovesNum int
 
-var labelOfColumns = []string{"A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"}
+var labelOfColumns = []string{"0", "A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"}
 
 // FlipColor - 白黒反転させます。
 func FlipColor(col int) int {
@@ -166,8 +166,8 @@ func (board *Board) PutStone(tIdx int, color int, fillEyeErr int) int {
 		around[dir][0] = 0
 		around[dir][1] = 0
 		around[dir][2] = 0
-		z := tIdx + Dir4[dir]
-		color2 := board.ColorAt(z)
+		tIdx2 := tIdx + Dir4[dir]
+		color2 := board.ColorAt(tIdx2)
 		if color2 == 0 {
 			space++
 		}
@@ -177,13 +177,13 @@ func (board *Board) PutStone(tIdx int, color int, fillEyeErr int) int {
 		if color2 == 0 || color2 == 3 {
 			continue
 		}
-		board.CountLiberty(z, &liberty, &stone)
+		board.CountLiberty(tIdx2, &liberty, &stone)
 		around[dir][0] = liberty
 		around[dir][1] = stone
 		around[dir][2] = color2
 		if color2 == unCol && liberty == 1 {
 			captureSum += stone
-			koMaybe = z
+			koMaybe = tIdx2
 		}
 		if color2 == color && 2 <= liberty {
 			mycolSafe++
@@ -230,8 +230,8 @@ func (board Board) GetTIdxFromFileRank(file int, rank int) int {
 
 // GetNameFromTIdx -
 func (board Board) GetNameFromTIdx(tIdx int) string {
-	x, y := board.GetXYFromTIdx(tIdx)
-	return GetNameFromXY(x, y)
+	file, rank := board.GetFileRankFromTIdx(tIdx)
+	return GetNameFromFileRank(file, rank)
 }
 
 // GetEmptyTIdx - 空点の tIdx（配列のインデックス）を返します。
@@ -265,16 +265,16 @@ func (board Board) countLibertySub(tIdx int, color int, pLiberty *int, pStone *i
 	checkBoard[tIdx] = 1
 	*pStone++
 	for i := 0; i < 4; i++ {
-		z := tIdx + Dir4[i]
-		if checkBoard[z] != 0 {
+		tIdx2 := tIdx + Dir4[i]
+		if checkBoard[tIdx2] != 0 {
 			continue
 		}
-		if !board.Exists(z) {
-			checkBoard[z] = 1
+		if !board.Exists(tIdx2) {
+			checkBoard[tIdx2] = 1
 			*pLiberty++
 		}
-		if board.data[z] == color {
-			board.countLibertySub(z, color, pLiberty, pStone)
+		if board.data[tIdx2] == color {
+			board.countLibertySub(tIdx2, color, pLiberty, pStone)
 		}
 	}
 }
@@ -301,14 +301,14 @@ func (board Board) MaxMoves() int {
 	return board.maxMoves
 }
 
-// GetNameFromXY - (1,1) を "A1" に変換
-func GetNameFromXY(x int, y int) string {
-	return fmt.Sprintf("%s%d", labelOfColumns[x], y)
+// GetNameFromFileRank - (1,1) を "A1" に変換
+func GetNameFromFileRank(file int, rank int) string {
+	return fmt.Sprintf("%s%d", labelOfColumns[file], rank)
 }
 
-// GetXYFromTIdx - x,y を tIdx（配列のインデックス）へ変換します。
-func (board Board) GetXYFromTIdx(tIdx int) (int, int) {
-	return tIdx / board.SentinelWidth(), tIdx % board.SentinelWidth()
+// GetFileRankFromTIdx - tIdx（配列のインデックス）を、file, rank へ変換します。
+func (board Board) GetFileRankFromTIdx(tIdx int) (int, int) {
+	return tIdx % board.SentinelWidth(), tIdx / board.SentinelWidth()
 }
 
 // GetXYFromName - "A1" を (1,1) に変換します
