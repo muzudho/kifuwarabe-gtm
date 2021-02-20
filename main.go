@@ -77,39 +77,39 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		command := scanner.Text()
-		u.G.Log.Trace("<Engine> '%s' コマンドを受け取ったぜ☆（＾～＾）\n", command)
+		u.G.Log.Trace(">--Engine--> '%s' command\n", command)
 
 		tokens := strings.Split(command, " ")
 		switch tokens[0] {
 		case "boardsize":
-			u.G.Log.Trace("<Engine> 'boardsize' には空行を返すぜ（＾～＾）\n")
+			u.G.Log.Trace("<--Engine--< Blank line\n")
 			u.G.Chat.Print("= \n\n")
 		case "clear_board":
 			board.InitBoard()
-			u.G.Log.Trace("<Engine> 'clear_board' に対応して盤を初期化するぜ（＾～＾）\n")
+			u.G.Log.Trace("<--Engine--< Blank line\n")
 			u.G.Chat.Print("= \n\n")
 		case "quit":
-			u.G.Log.Trace("<Engine> 'quit' に対応してアプリケーションを終了するぜ（＾～＾）\n")
+			u.G.Log.Trace("<--Engine--< Quit\n")
 			os.Exit(0)
 		case "protocol_version":
-			u.G.Log.Trace("<Engine> 'protocol_version' に対応してバージョン番号を返すぜ（＾～＾）\n")
+			u.G.Log.Trace("<--Engine--< Version & Blank line\n")
 			u.G.Chat.Print("= 2\n\n")
 		case "name":
-			u.G.Log.Trace("<Engine> 'name' に対応して名前を返すぜ（＾～＾）\n")
+			u.G.Log.Trace("<--Engine--< Name & Blank line\n")
 			u.G.Chat.Print("= KwGoGo\n\n")
 		case "version":
-			u.G.Log.Trace("<Engine> 'version' に対応してバージョン番号を返すぜ（＾～＾）\n")
+			u.G.Log.Trace("<--Engine--< Version & Blank line\n")
 			u.G.Chat.Print("= 0.0.1\n\n")
 		case "list_commands":
-			u.G.Log.Trace("<Engine> 'list_commands' に対応してコマンドのリストを返すぜ（＾～＾）\n")
+			u.G.Log.Trace("<--Engine--< CommandList & Blank line\n")
 			u.G.Chat.Print("= boardsize\nclear_board\nquit\nprotocol_version\nundo\n" +
 				"name\nversion\nlist_commands\nkomi\ngenmove\nplay\n\n")
 		case "komi":
-			u.G.Log.Trace("<Engine> 'komi' に対応してコミを返すぜ（＾～＾）\n")
+			u.G.Log.Trace("<--Engine--< Komi & Blank line\n")
 			u.G.Chat.Print("= 6.5\n\n") // TODO コミ
 		case "undo":
-			u.UndoV9()
-			u.G.Log.Trace("<Engine> 'undo' は未実装だぜ（＾～＾）\n")
+			u.UndoV9() // TODO アンドゥ
+			u.G.Log.Trace("<--Engine--< Unimplemented & Blank line\n")
 			u.G.Chat.Print("= \n\n")
 		// 19路盤だと、すごい長い時間かかる。
 		// genmove b
@@ -124,7 +124,7 @@ func main() {
 
 			bestmoveString := p.GetPointName(board, tIdx)
 
-			u.G.Log.Trace("<Engine> 'genmove' に対応して[%s]を返すぜ（＾～＾）\n", bestmoveString)
+			u.G.Log.Trace("<--Engine--< [%s] & Blank line\n", bestmoveString)
 			u.G.Chat.Print("= %s\n\n", bestmoveString)
 		// play b a3
 		// play w d4
@@ -137,40 +137,38 @@ func main() {
 		// play b pass
 		// play w pass
 		case "play":
-			// u.G.Log.Trace("<Engine> 'play' コマンドを受け取ったぜ☆（＾～＾）\n")
-
 			color := 1
 			if 1 < len(tokens) && strings.ToLower(tokens[1]) == "w" {
 				color = 2
 			}
 
-			u.G.Log.Trace("<Engine> color=%d len(tokens)=%d\n", color, len(tokens))
+			// u.G.Log.Trace("<Engine> color=%d len(tokens)=%d\n", color, len(tokens))
 
 			if 2 < len(tokens) {
-				u.G.Log.Trace("<Engine> tokens[2]=%s\n", tokens[2])
+				// u.G.Log.Trace("<Engine> tokens[2]=%s\n", tokens[2])
 				var tIdx int
 				if strings.ToLower(tokens[2]) == "pass" {
 					tIdx = 0
-					u.G.Log.Trace("<Engine> Pass\n")
+					// u.G.Log.Trace("<Engine> Pass\n")
 				} else {
 					x, y, err := e.GetXYFromName(tokens[2])
 					if err != nil {
-						panic(err)
+						panic(u.G.Log.Fatal(err.Error()))
 					}
 
 					tIdx = board.GetTIdxFromFileRank(x+1, y+1)
 
-					u.G.Log.Trace("<Engine> x=%d y=%d\n", x, y)
+					// u.G.Log.Trace("<Engine> file=%d rank=%d\n", x+1, y+1)
 				}
 				board.AddMoves(tIdx, color, 0)
 				presenter.PrintBoardHeader(board, e.MovesNum)
 				presenter.PrintBoard(board)
 
-				u.G.Log.Trace("<Engine> 'play' に対応して空行を返すぜ（＾～＾）\n")
+				u.G.Log.Trace("<--Engine--< Blank line\n")
 				u.G.Chat.Print("= \n\n")
 			}
 		default:
-			u.G.Log.Trace("<Engine> '%s' コマンドには未対応だぜ（＾～＾）\n", tokens[0])
+			u.G.Log.Trace("<--Engine--< Unimplemented '%s' command\n", tokens[0])
 			u.G.Chat.Print("? unknown_command\n\n")
 		}
 	}
