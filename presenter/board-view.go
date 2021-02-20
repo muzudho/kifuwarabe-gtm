@@ -26,8 +26,8 @@ var labelOfRows = [20]string{" 0", " 1", " 2", " 3", " 4", " 5", " 6", " 7", " 8
 var stoneLabels = [4]string{" .", " x", " o", " #"}
 
 // PrintBoardHeader - 手数などを表示
-func PrintBoardHeader(board *e.Board, moves int) {
-	u.G.StderrChat.Info("[ Ko=%s MovesNum=%d ]\n", (*board).GetNameFromTIdx(board.KoIdx), moves)
+func PrintBoardHeader(board *e.Board, movesNum int) {
+	u.G.StderrChat.Info("[ Ko=%s MovesNum=%d ]\n", (*board).GetNameFromTIdx(board.KoIdx), movesNum)
 }
 
 // PrintBoard - 盤を描画
@@ -63,11 +63,11 @@ func PrintBoard(board *e.Board) {
 }
 
 // PrintSgf - SGF形式の棋譜表示
-func PrintSgf(board *e.Board, moves int, record []int) {
+func PrintSgf(board *e.Board, movesNum int, record []int) {
 	boardSize := board.BoardSize()
 
 	fmt.Printf("(;GM[1]SZ[%d]KM[%.1f]PB[]PW[]\n", boardSize, board.Komi())
-	for i := 0; i < moves; i++ {
+	for i := 0; i < movesNum; i++ {
 		z := record[i]
 		y := z / board.SentinelWidth()
 		x := z - y*board.SentinelWidth()
