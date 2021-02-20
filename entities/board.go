@@ -137,7 +137,7 @@ func (board Board) ColorAtFileRank(file int, rank int) int {
 	return board.data[rank*board.sentinelWidth+file]
 }
 
-// SetColor - 盤データ。
+// SetColor - 盤データ
 func (board *Board) SetColor(tIdx int, color int) {
 	board.data[tIdx] = color
 }

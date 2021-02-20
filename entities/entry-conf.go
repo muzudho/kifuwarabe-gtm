@@ -1,8 +1,10 @@
 package entities
 
 import (
-	"strconv"
 	"strings"
+	"unicode"
+
+	"github.com/muzudho/kifuwarabe-gtp/entities/stone"
 )
 
 // EntryConf - Tomlファイル。
@@ -35,22 +37,36 @@ type Engine struct {
 	BoardData string
 }
 
+func removeAllWhiteSpace(str string) string {
+	var b strings.Builder
+	b.Grow(len(str))
+	for _, ch := range str {
+		if !unicode.IsSpace(ch) {
+			b.WriteRune(ch)
+		}
+	}
+	return b.String()
+}
+
 // GetBoardArray - 盤上の石の色の配列。
 func (config EntryConf) GetBoardArray() []int {
-	// 最後のカンマを削除しないと、要素数が 1 多くなってしまいます。
-	s := strings.TrimRight(config.Engine.BoardData, ",")
-	// fmt.Println("s=", s)
-	nodes := strings.Split(s, ",")
+	nodes := removeAllWhiteSpace(config.Engine.BoardData)
 	array := make([]int, len(nodes))
 	for i, s := range nodes {
-		s := strings.Trim(s, " ")
-		color, _ := strconv.Atoi(s)
-		// fmt.Println("strconv.Atoi(", s, ")=", color)
-		array[i] = color
+		switch s {
+		case '.':
+			array[i] = int(stone.None)
+		case 'x':
+			array[i] = int(stone.Black)
+		case 'o':
+			array[i] = int(stone.White)
+		case '+':
+			array[i] = int(stone.Wall)
+		default:
+			// Ignored.
+		}
 	}
 
-	// fmt.Println("nodes=", nodes)
-	// fmt.Println("array=", array)
 	return array
 }
 
