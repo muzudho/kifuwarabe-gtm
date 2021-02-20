@@ -8,8 +8,8 @@ import (
 	"github.com/pelletier/go-toml"
 )
 
-// LoadEntryConf - ゲーム設定ファイルを読み込みます。
-func LoadEntryConf(path string) e.EngineConf {
+// LoadEngineConf - ゲーム設定ファイルを読み込みます。
+func LoadEngineConf(path string) e.EngineConf {
 
 	// ファイル読込
 	fileData, err := ioutil.ReadFile(path)

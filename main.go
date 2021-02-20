@@ -31,7 +31,7 @@ func main() {
 	// コマンドライン引数
 	workdir := flag.String("workdir", wdir, "Working directory path.")
 	flag.Parse()
-	entryConfPath := filepath.Join(*workdir, "input/engine.conf.toml")
+	engineConfPath := filepath.Join(*workdir, "input/engine.conf.toml")
 
 	// グローバル変数の作成
 	u.G = *new(u.GlobalVariables)
@@ -54,14 +54,14 @@ func main() {
 	u.G.Log.Trace("...Engine wdir=%s\n", wdir)
 	u.G.Log.Trace("...Engine flag.Args()=%s\n", flag.Args())
 	u.G.Log.Trace("...Engine workdir=%s\n", *workdir)
-	u.G.Log.Trace("...Engine entryConfPath=%s\n", entryConfPath)
+	u.G.Log.Trace("...Engine engineConfPath=%s\n", engineConfPath)
 
 	// チャッターの作成。 標準出力とロガーを一緒にしただけです。
 	u.G.Chat = *u.NewChatter(u.G.Log)
 	u.G.StderrChat = *u.NewStderrChatter(u.G.Log)
 
 	// TODO ファイルが存在しなければ、強制終了します。
-	config := ui.LoadEntryConf(entryConfPath) // "input/engine.conf.toml"
+	config := ui.LoadEngineConf(engineConfPath)
 
 	board := e.NewBoard(config.GetBoardArray(), config.BoardSize(), config.SentinelBoardMax(), config.Komi(), config.MaxMoves())
 	e.UctChildrenSize = config.BoardSize()*config.BoardSize() + 1
