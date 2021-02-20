@@ -28,28 +28,28 @@ func LoadEntryConf(path string) e.EntryConf {
 }
 
 func debugPrintToml(fileData []byte) {
-	// u.G.Log.Trace("<Engine> content=%s", string(fileData))
+	// u.G.Log.Trace("...Engine content=%s", string(fileData))
 
 	// Toml解析
 	tomlTree, err := toml.Load(string(fileData))
 	if err != nil {
 		panic(err)
 	}
-	u.G.Log.Trace("<Engine> Input:\n")
-	u.G.Log.Trace("<Engine> Engine.Komi=%f\n", tomlTree.Get("Engine.Komi").(float64))
-	u.G.Log.Trace("<Engine> Engine.BoardSize=%d\n", tomlTree.Get("Engine.BoardSize").(int64))
-	u.G.Log.Trace("<Engine> Engine.MaxMoves=%d\n", tomlTree.Get("Engine.MaxMoves").(int64))
-	u.G.Log.Trace("<Engine> Engine.BoardData=%s\n", tomlTree.Get("Engine.BoardData").(string))
+	u.G.Log.Trace("...Engine Input:\n")
+	u.G.Log.Trace("...Engine Engine.Komi=%f\n", tomlTree.Get("Engine.Komi").(float64))
+	u.G.Log.Trace("...Engine Engine.BoardSize=%d\n", tomlTree.Get("Engine.BoardSize").(int64))
+	u.G.Log.Trace("...Engine Engine.MaxMoves=%d\n", tomlTree.Get("Engine.MaxMoves").(int64))
+	u.G.Log.Trace("...Engine Engine.BoardData=%s\n", tomlTree.Get("Engine.BoardData").(string))
 }
 func debugPrintConfig(config e.EntryConf) {
-	u.G.Log.Trace("<Engine> Memory:\n")
-	u.G.Log.Trace("<Engine> Server.Host=%s\n", config.Server.Host)
-	u.G.Log.Trace("<Engine> Server.Port=%d\n", config.Server.Port)
-	u.G.Log.Trace("<Engine> User.Name=%s\n", config.User.Name)
-	u.G.Log.Trace("<Engine> User.Pass=%s\n", config.User.Pass)
-	u.G.Log.Trace("<Engine> Engine.Komi=%f\n", config.Engine.Komi)
-	u.G.Log.Trace("<Engine> Engine.BoardSize=%d\n", config.Engine.BoardSize)
-	u.G.Log.Trace("<Engine> Engine.MaxMoves=%d\n", config.Engine.MaxMoves)
-	u.G.Log.Trace("<Engine> Engine.MaxMoves=%s\n", config.Engine.BoardData)
-	u.G.Log.Trace("<Engine> Engine.SentinelBoardMax()=%d\n", config.SentinelBoardMax())
+	u.G.Log.Trace("...Engine Memory:\n")
+	u.G.Log.Trace("...Engine Server.Host=%s\n", config.Server.Host)
+	u.G.Log.Trace("...Engine Server.Port=%d\n", config.Server.Port)
+	u.G.Log.Trace("...Engine User.Name=%s\n", config.User.Name)
+	u.G.Log.Trace("...Engine User.Pass=%s\n", config.User.Pass)
+	u.G.Log.Trace("...Engine Engine.Komi=%f\n", config.Engine.Komi)
+	u.G.Log.Trace("...Engine Engine.BoardSize=%d\n", config.Engine.BoardSize)
+	u.G.Log.Trace("...Engine Engine.MaxMoves=%d\n", config.Engine.MaxMoves)
+	u.G.Log.Trace("...Engine Engine.MaxMoves=%s\n", config.Engine.BoardData)
+	u.G.Log.Trace("...Engine Engine.SentinelBoardMax()=%d\n", config.SentinelBoardMax())
 }

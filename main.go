@@ -25,7 +25,7 @@ func main() {
 	wdir, err := os.Getwd()
 	if err != nil {
 		// ここでは、ログはまだ設定できてない
-		panic(fmt.Sprintf("<Engine> wdir=%s", wdir))
+		panic(fmt.Sprintf("...Engine wdir=%s", wdir))
 	}
 
 	// コマンドライン引数
@@ -48,13 +48,13 @@ func main() {
 		filepath.Join(*workdir, "output/fatal.log"),
 		filepath.Join(*workdir, "output/print.log"))
 
-	u.G.Log.Trace("<Engine> KifuwarabeGoGo プログラム開始☆（＾～＾）\n")
-	u.G.Log.Trace("<Engine> Author: %s\n", u.Author)
-	u.G.Log.Trace("<Engine> This is a GTP engine.\n")
-	u.G.Log.Trace("<Engine> wdir=%s\n", wdir)
-	u.G.Log.Trace("<Engine> flag.Args()=%s\n", flag.Args())
-	u.G.Log.Trace("<Engine> workdir=%s\n", *workdir)
-	u.G.Log.Trace("<Engine> entryConfPath=%s\n", entryConfPath)
+	u.G.Log.Trace("...Engine KifuwarabeGoGo プログラム開始☆（＾～＾）\n")
+	u.G.Log.Trace("...Engine Author: %s\n", u.Author)
+	u.G.Log.Trace("...Engine This is a GTP engine.\n")
+	u.G.Log.Trace("...Engine wdir=%s\n", wdir)
+	u.G.Log.Trace("...Engine flag.Args()=%s\n", flag.Args())
+	u.G.Log.Trace("...Engine workdir=%s\n", *workdir)
+	u.G.Log.Trace("...Engine entryConfPath=%s\n", entryConfPath)
 
 	// チャッターの作成。 標準出力とロガーを一緒にしただけです。
 	u.G.Chat = *u.NewChatter(u.G.Log)
@@ -66,50 +66,50 @@ func main() {
 	board := e.NewBoard(config.GetBoardArray(), config.BoardSize(), config.SentinelBoardMax(), config.Komi(), config.MaxMoves())
 	e.UctChildrenSize = config.BoardSize()*config.BoardSize() + 1
 
-	u.G.Log.Trace("<Engine> board.BoardSize()=%d\n", board.BoardSize())
-	u.G.Log.Trace("<Engine> board.SentinelBoardMax()=%d\n", board.SentinelBoardMax())
+	u.G.Log.Trace("...Engine board.BoardSize()=%d\n", board.BoardSize())
+	u.G.Log.Trace("...Engine board.SentinelBoardMax()=%d\n", board.SentinelBoardMax())
 
 	rand.Seed(time.Now().UnixNano())
 	board.InitBoard()
 
-	u.G.Log.Trace("<Engine> 何か標準入力しろだぜ☆（＾～＾）\n")
+	u.G.Log.Trace("...Engine 何か標準入力しろだぜ☆（＾～＾）\n")
 
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		command := scanner.Text()
-		u.G.Log.Trace(">--Engine--> '%s' command\n", command)
+		u.G.Log.Trace("-->Engine '%s' command\n", command)
 
 		tokens := strings.Split(command, " ")
 		switch tokens[0] {
 		case "boardsize":
-			u.G.Log.Trace("<--Engine--< Blank line\n")
+			u.G.Log.Trace("<--Engine ok\n")
 			u.G.Chat.Print("= \n\n")
 		case "clear_board":
 			board.InitBoard()
-			u.G.Log.Trace("<--Engine--< Blank line\n")
+			u.G.Log.Trace("<--Engine ok\n")
 			u.G.Chat.Print("= \n\n")
 		case "quit":
-			u.G.Log.Trace("<--Engine--< Quit\n")
+			u.G.Log.Trace("<--Engine Quit\n")
 			os.Exit(0)
 		case "protocol_version":
-			u.G.Log.Trace("<--Engine--< Version & Blank line\n")
+			u.G.Log.Trace("<--Engine Version ok\n")
 			u.G.Chat.Print("= 2\n\n")
 		case "name":
-			u.G.Log.Trace("<--Engine--< Name & Blank line\n")
+			u.G.Log.Trace("<--Engine Name ok\n")
 			u.G.Chat.Print("= KwGoGo\n\n")
 		case "version":
-			u.G.Log.Trace("<--Engine--< Version & Blank line\n")
+			u.G.Log.Trace("<--Engine Version ok\n")
 			u.G.Chat.Print("= 0.0.1\n\n")
 		case "list_commands":
-			u.G.Log.Trace("<--Engine--< CommandList & Blank line\n")
+			u.G.Log.Trace("<--Engine CommandList ok\n")
 			u.G.Chat.Print("= boardsize\nclear_board\nquit\nprotocol_version\nundo\n" +
 				"name\nversion\nlist_commands\nkomi\ngenmove\nplay\n\n")
 		case "komi":
-			u.G.Log.Trace("<--Engine--< Komi & Blank line\n")
+			u.G.Log.Trace("<--Engine Komi ok\n")
 			u.G.Chat.Print("= 6.5\n\n") // TODO コミ
 		case "undo":
 			u.UndoV9() // TODO アンドゥ
-			u.G.Log.Trace("<--Engine--< Unimplemented & Blank line\n")
+			u.G.Log.Trace("<--Engine Unimplemented undo, ignored\n")
 			u.G.Chat.Print("= \n\n")
 		// 19路盤だと、すごい長い時間かかる。
 		// genmove b
@@ -124,7 +124,7 @@ func main() {
 
 			bestmoveString := p.GetPointName(board, tIdx)
 
-			u.G.Log.Trace("<--Engine--< [%s] & Blank line\n", bestmoveString)
+			u.G.Log.Trace("<--Engine [%s] ok\n", bestmoveString)
 			u.G.Chat.Print("= %s\n\n", bestmoveString)
 		// play b a3
 		// play w d4
@@ -142,14 +142,14 @@ func main() {
 				color = 2
 			}
 
-			// u.G.Log.Trace("<Engine> color=%d len(tokens)=%d\n", color, len(tokens))
+			// u.G.Log.Trace("...Engine color=%d len(tokens)=%d\n", color, len(tokens))
 
 			if 2 < len(tokens) {
-				// u.G.Log.Trace("<Engine> tokens[2]=%s\n", tokens[2])
+				// u.G.Log.Trace("...Engine tokens[2]=%s\n", tokens[2])
 				var tIdx int
 				if strings.ToLower(tokens[2]) == "pass" {
 					tIdx = 0
-					// u.G.Log.Trace("<Engine> Pass\n")
+					// u.G.Log.Trace("...Engine Pass\n")
 				} else {
 					x, y, err := e.GetXYFromName(tokens[2])
 					if err != nil {
@@ -158,17 +158,17 @@ func main() {
 
 					tIdx = board.GetTIdxFromFileRank(x+1, y+1)
 
-					// u.G.Log.Trace("<Engine> file=%d rank=%d\n", x+1, y+1)
+					// u.G.Log.Trace("...Engine file=%d rank=%d\n", x+1, y+1)
 				}
 				board.AddMoves(tIdx, color, 0)
 				presenter.PrintBoardHeader(board, e.MovesNum)
 				presenter.PrintBoard(board)
 
-				u.G.Log.Trace("<--Engine--< Blank line\n")
+				u.G.Log.Trace("<--Engine ok\n")
 				u.G.Chat.Print("= \n\n")
 			}
 		default:
-			u.G.Log.Trace("<--Engine--< Unimplemented '%s' command\n", tokens[0])
+			u.G.Log.Trace("<--Engine Unimplemented '%s' command\n", tokens[0])
 			u.G.Chat.Print("? unknown_command\n\n")
 		}
 	}
