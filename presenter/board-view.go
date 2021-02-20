@@ -16,25 +16,13 @@ type BoardView struct {
 var labelOfColumns = [20]byte{'@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J',
 	'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'}
 
-// 文字が詰まってしまうので、１に似たギリシャ文字で隙間を空けています。
-// var labelOfColumns = [20]string{"零", " 1", " 2", " 3", " 4", " 5", " 6", " 7", " 8", " 9",
-//	"ι0", "ι1", "ι2", "ι3", "ι4", "ι5", "ι6", "ι7", "ι8", "ι9"}
-
-// labelOfRowsV1 - 各行の表示符号。
-var labelOfRowsV1 = [20]string{"零", "一", "二", "三", "四", "五", "六", "七", "八", "九",
+// labelOfRows - 各行の表示符号。
+var labelOfRows = [20]string{" 0", " 1", " 2", " 3", " 4", " 5", " 6", " 7", " 8", " 9",
 	"10", "11", "12", "13", "14", "15", "16", "17", "18", "19"}
 
-// labelOfRowsV9a - 各行の表示符号。
-var labelOfRowsV9a = [20]string{" 0", " 1", " 2", " 3", " 4", " 5", " 6", " 7", " 8", " 9",
-	"10", "11", "12", "13", "14", "15", "16", "17", "18", "19"}
-
-// " ●" - Visual Studio Code の 全角半角崩れ対応。
+// " x" - Visual Studio Code の 全角半角崩れ対応。
 // " ○" - Visual Studio Code の 全角半角崩れ対応。
-var stoneLabelsType1 = [4]string{"・", " ●", " ○", "＃"}
-
-// " *" - Visual Studio Code の 全角半角崩れ対応。
-// " ○" - Visual Studio Code の 全角半角崩れ対応。
-var stoneLabelsType2 = [4]string{" .", " *", " o", " #"}
+var stoneLabels = [4]string{" .", " x", " o", " #"}
 
 // PrintBoardType1 - 盤の描画。
 func (presenter *BoardView) PrintBoardType1(board *e.Board) {
@@ -50,9 +38,9 @@ func (presenter *BoardView) PrintBoardType1(board *e.Board) {
 	}
 	fmt.Printf("+\n")
 	for y := 0; y < boardSize; y++ {
-		fmt.Printf("%s|", labelOfRowsV1[y+1])
+		fmt.Printf("%s|", labelOfRows[y+1])
 		for x := 0; x < boardSize; x++ {
-			fmt.Printf("%s", stoneLabelsType1[board.ColorAtFileRank(x+1, y+1)])
+			fmt.Printf("%s", stoneLabels[board.ColorAtFileRank(x+1, y+1)])
 		}
 		fmt.Printf("|\n")
 	}
@@ -77,9 +65,9 @@ func (presenter *BoardView) PrintBoardType2(board *e.Board, moves int) {
 	}
 	fmt.Fprintf(os.Stderr, "+\n")
 	for y := 0; y < boardSize; y++ {
-		fmt.Fprintf(os.Stderr, "%s|", labelOfRowsV9a[y+1])
+		fmt.Fprintf(os.Stderr, "%s|", labelOfRows[y+1])
 		for x := 0; x < boardSize; x++ {
-			fmt.Fprintf(os.Stderr, "%s", stoneLabelsType2[(*board).ColorAtFileRank(x+1, y+1)])
+			fmt.Fprintf(os.Stderr, "%s", stoneLabels[(*board).ColorAtFileRank(x+1, y+1)])
 		}
 		fmt.Fprintf(os.Stderr, "|")
 		if y == 4 {
