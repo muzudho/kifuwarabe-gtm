@@ -6,6 +6,7 @@ package main
 import (
 	"bufio"
 	"flag"
+	"fmt"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -22,7 +23,8 @@ func main() {
 	// Working directory
 	wdir, err := os.Getwd()
 	if err != nil {
-		panic(u.G.Log.Fatal("<Engine> wdir=%s", wdir))
+		// ここでは、ログはまだ設定できてない
+		panic(fmt.Sprintf("<Engine> wdir=%s", wdir))
 	}
 
 	// コマンドライン引数
