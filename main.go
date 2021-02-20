@@ -62,6 +62,7 @@ func main() {
 	config := ui.LoadEntryConf(entryConfPath) // "input/default.entryConf.toml"
 
 	board := e.NewBoard(config.GetBoardArray(), config.BoardSize(), config.SentinelBoardMax(), config.Komi(), config.MaxMoves())
+	e.UctChildrenSize = config.BoardSize()*config.BoardSize() + 1
 
 	u.G.Log.Trace("<Engine> board.BoardSize()=%d\n", board.BoardSize())
 	u.G.Log.Trace("<Engine> board.SentinelBoardMax()=%d\n", board.SentinelBoardMax())
