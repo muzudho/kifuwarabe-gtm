@@ -7,14 +7,8 @@ import (
 	e "github.com/muzudho/kifuwarabe-gtp/entities"
 )
 
-// presenterV9a - 表示機能 Version 9a.
-type presenterV9a struct {
-}
-
-// NewPresenterV9a - 表示機能を作成します。
-func NewPresenterV9a() *presenterV9a {
-	presenter := new(presenterV9a)
-	return presenter
+// BoardView - 表示機能 Version 9a.
+type BoardView struct {
 }
 
 // labelOfColumns - 各列の表示符号。
@@ -43,7 +37,7 @@ var stoneLabelsType1 = [4]string{"・", " ●", " ○", "＃"}
 var stoneLabelsType2 = [4]string{" .", " *", " o", " #"}
 
 // PrintBoardType1 - 盤の描画。
-func (presenter *presenterV9a) PrintBoardType1(board *e.Board) {
+func (presenter *BoardView) PrintBoardType1(board *e.Board) {
 	boardSize := board.BoardSize()
 
 	fmt.Printf("\n   ")
@@ -69,39 +63,8 @@ func (presenter *presenterV9a) PrintBoardType1(board *e.Board) {
 	fmt.Printf("+\n")
 }
 
-// PrintBoardType2 - 盤の描画。
-func printBoardType2(board *e.Board, moves int) {
-	boardSize := (*board).BoardSize()
-
-	fmt.Printf("\n   ")
-	for x := 0; x < boardSize; x++ {
-		fmt.Printf(" %c", labelOfColumns[x+1])
-	}
-	fmt.Printf("\n  +")
-	for x := 0; x < boardSize; x++ {
-		fmt.Printf("--")
-	}
-	fmt.Printf("+\n")
-	for y := 0; y < boardSize; y++ {
-		fmt.Printf("%s|", labelOfRowsV1[y+1])
-		for x := 0; x < boardSize; x++ {
-			fmt.Printf("%s", stoneLabelsType1[(*board).ColorAtFileRank(x+1, y+1)])
-		}
-		fmt.Printf("|")
-		if y == 4 {
-			fmt.Printf("  Ko=%s,moves=%d", (*board).GetNameFromTIdx(board.KoIdx), moves)
-		}
-		fmt.Printf("\n")
-	}
-	fmt.Printf("  +")
-	for x := 0; x < boardSize; x++ {
-		fmt.Printf("--")
-	}
-	fmt.Printf("+\n")
-}
-
 // PrintBoardType2 - 盤を描画。
-func (presenter *presenterV9a) PrintBoardType2(board *e.Board, moves int) {
+func (presenter *BoardView) PrintBoardType2(board *e.Board, moves int) {
 	boardSize := (*board).BoardSize()
 
 	fmt.Fprintf(os.Stderr, "\n   ")

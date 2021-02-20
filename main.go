@@ -14,6 +14,7 @@ import (
 	"time"
 
 	e "github.com/muzudho/kifuwarabe-gtp/entities"
+	"github.com/muzudho/kifuwarabe-gtp/presenter"
 	p "github.com/muzudho/kifuwarabe-gtp/presenter"
 	"github.com/muzudho/kifuwarabe-gtp/ui"
 	u "github.com/muzudho/kifuwarabe-gtp/usecases"
@@ -67,7 +68,7 @@ func main() {
 	u.G.Log.Trace("<Engine> board.BoardSize()=%d\n", board.BoardSize())
 	u.G.Log.Trace("<Engine> board.SentinelBoardMax()=%d\n", board.SentinelBoardMax())
 
-	presenter := p.NewPresenterV9a()
+	presenter := new(presenter.BoardView)
 
 	rand.Seed(time.Now().UnixNano())
 	board.InitBoard()
