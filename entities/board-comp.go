@@ -43,7 +43,7 @@ func Playout(board *IBoard, turnColor int, printBoardType1 func(IBoard)) int {
 				r = rand.Intn(emptyNum)
 				tIdx = empty[r]
 			}
-			err := (*board).PutStone(tIdx, color, FillEyeErr)
+			err := (*board).PutStone(tIdx, color, DoNotFillEye)
 			if err == 0 {
 				break
 			}
@@ -126,7 +126,7 @@ func PrimitiveMonteCalro(board *IBoard, color int, printBoardType1 func(IBoard))
 			if (*board).Exists(z) {
 				continue
 			}
-			err := (*board).PutStone(z, color, FillEyeErr)
+			err := (*board).PutStone(z, color, DoNotFillEye)
 			if err != 0 {
 				continue
 			}

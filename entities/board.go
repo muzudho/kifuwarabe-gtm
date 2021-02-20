@@ -11,47 +11,45 @@ import (
 
 // IBoard - 盤
 type IBoard interface {
-	// 指定した交点の石の色
-	ColorAt(tIdx int) int
-	ColorAtXy(x int, y int) int
-	SetColor(tIdx int, color int)
-
-	// GetNameFromTIdx -
-	GetNameFromTIdx(tIdx int) string
-
+	// 盤について
 	CopyData() []int
 	ImportData(boardCopy2 []int)
-	Exists(tIdx int) bool
-
-	// 石を置きます。
-	PutStone(tIdx int, color int, fillEyeErr int) int
-
-	CountLiberty(tIdx int, pLiberty *int, pStone *int)
-	TakeStone(tIdx int, color int)
-	GetEmptyTIdx() int
-
-	// AddMoves - 指し手の追加？
-	AddMoves(tIdx int, color int, sec float64, printBoardType2 func(IBoard, int))
-
 	BoardSize() int
 	// SentinelWidth - 枠付きの盤の一辺の交点数
 	SentinelWidth() int
 	SentinelBoardMax() int
+
+	// 交点について
+	// 指定した交点の石の色
+	ColorAt(tIdx int) int
+	ColorAtXy(x int, y int) int
+	SetColor(tIdx int, color int)
+	Exists(tIdx int) bool
+	// 石を置きます。
+	PutStone(tIdx int, color int, fillEyeErr int) int
+	// GetTIdxFromXy - YX形式の座標を、tIdx（配列のインデックス）へ変換します。
+	GetTIdxFromXy(x int, y int) int
+	// GetNameFromTIdx -
+	GetNameFromTIdx(tIdx int) string
+
+	// 検索について
+	GetEmptyTIdx() int
+
+	// 呼吸点について
+	CountLiberty(tIdx int, pLiberty *int, pStone *int)
+
+	// ゲーム操作について
+	// AddMoves - 指し手の追加？
+	AddMoves(tIdx int, color int, sec float64, printBoardType2 func(IBoard, int))
+	TakeStone(tIdx int, color int)
+
+	// ゲームについて
 	// 6.5 といった数字を入れるだけ。実行速度優先で 64bitに。
 	Komi() float64
 	MaxMoves() int
-	// GetTIdxFromXy - YX形式の座標を、tIdx（配列のインデックス）へ変換します。
-	GetTIdxFromXy(x int, y int) int
 }
 
-// IPresenter - 表示用
-type IPresenter interface {
-	// 盤の描画。
-	PrintBoardType1(board IBoard)
-	PrintBoardType2(board IBoard, moves int)
-}
-
-// Record - 棋譜？
+// Record - 棋譜
 var Record []int
 
 // RecordTime - 一手にかかった時間。
@@ -61,10 +59,10 @@ var RecordTime []float64
 var Dir4 = [4]int{1, 9, -1, 9}
 
 const (
-	// FillEyeErr - 自分の眼を埋めるなってこと☆（＾～＾）？
-	FillEyeErr = 1
-	// FillEyeOk - 自分の眼を埋めてもいいってこと☆（＾～＾）？
-	FillEyeOk = 0
+	// DoNotFillEye - 自分の眼を埋めるなってこと☆（＾～＾）
+	DoNotFillEye = 1
+	// MayFillEye - 自分の眼を埋めてもいいってこと☆（＾～＾）
+	MayFillEye = 0
 )
 
 // KoIdx - コウの交点。Idx（配列のインデックス）表示。 0 ならコウは無し？
@@ -75,9 +73,6 @@ var checkBoard = []int{}
 
 // MovesCount - 手数
 var MovesCount int
-
-// FlagTestPlayout - ？。
-var FlagTestPlayout int
 
 var labelOfColumns = []string{"A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"}
 
@@ -444,7 +439,7 @@ func (board *Board) PutStone(tIdx int, color int, fillEyeErr int) int {
 	if tIdx == KoIdx {
 		return 2
 	}
-	if wall+mycolSafe == 4 && fillEyeErr == FillEyeErr {
+	if wall+mycolSafe == 4 && fillEyeErr == DoNotFillEye {
 		return 3
 	}
 	if board.Exists(tIdx) {
@@ -473,7 +468,7 @@ func (board *Board) PutStone(tIdx int, color int, fillEyeErr int) int {
 
 // AddMoves - 指し手の追加？
 func (board *Board) AddMoves(tIdx int, color int, sec float64, printBoardType2 func(IBoard, int)) {
-	err := board.PutStone(tIdx, color, FillEyeOk)
+	err := board.PutStone(tIdx, color, MayFillEye)
 	if err != 0 {
 		fmt.Fprintf(os.Stderr, "(AddMoves) Err=%d\n", err)
 		os.Exit(0)
