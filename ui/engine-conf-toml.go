@@ -9,22 +9,22 @@ import (
 )
 
 // LoadEngineConf - ゲーム設定ファイルを読み込みます。
-func LoadEngineConf(path string) e.EngineConf {
+func LoadEngineConf(path string) (*e.EngineConf, error) {
 
 	// ファイル読込
 	fileData, err := ioutil.ReadFile(path)
 	if err != nil {
-		panic(u.G.Log.Fatal("path=%s err=%s", path, err))
+		return nil, err
 	}
 
 	debugPrintToml(fileData)
 
 	// Toml解析
 	binary := []byte(string(fileData))
-	config := e.EngineConf{}
-	toml.Unmarshal(binary, &config)
+	config := &e.EngineConf{}
+	toml.Unmarshal(binary, config)
 
-	return config
+	return config, nil
 }
 
 func debugPrintToml(fileData []byte) {

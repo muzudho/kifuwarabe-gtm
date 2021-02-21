@@ -65,7 +65,10 @@ func main() {
 	u.G.StderrChat = *u.NewStderrChatter(u.G.Log)
 
 	// TODO ファイルが存在しなければ、強制終了します。
-	config := ui.LoadEngineConf(engineConfPath)
+	config, err := ui.LoadEngineConf(engineConfPath)
+	if err != nil {
+		panic(u.G.Log.Fatal("path=[%s] err=[%s]", engineConfPath, err))
+	}
 
 	rand.Seed(time.Now().UnixNano())
 
