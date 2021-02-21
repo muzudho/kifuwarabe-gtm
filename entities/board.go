@@ -11,24 +11,12 @@ import (
 	"github.com/muzudho/kifuwarabe-gtp/entities/stone"
 )
 
-// Record - 棋譜
-var Record []int
-
-// RecordTime - 一手にかかった時間。
-var RecordTime []float64
-
-// Dir4 - ４方向（右、下、左、上）の番地。初期値は仮の値。
-var Dir4 = [4]int{1, 9, -1, 9}
-
 const (
 	// DoNotFillEye - 自分の眼を埋めるなってこと☆（＾～＾）
 	DoNotFillEye = 1
 	// MayFillEye - 自分の眼を埋めてもいいってこと☆（＾～＾）
 	MayFillEye = 0
 )
-
-// For count liberty.
-var checkBoard = []int{}
 
 var labelOfColumns = []string{"0", "A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"}
 
@@ -49,6 +37,15 @@ type Board struct {
 
 	// MovesNum - 手数
 	MovesNum int
+	// For count liberty.
+	checkBoard []int
+	// Record - 棋譜
+	Record []int
+
+	// RecordTime - 一手にかかった時間。
+	RecordTime []float64
+	// Dir4 - ４方向（右、下、左、上）の番地。初期値は仮の値。
+	Dir4 [4]int
 }
 
 // NewBoard - 盤を作成します。
@@ -61,10 +58,10 @@ func NewBoard(data []int, boardSize int, sentinelBoardMax int, komi float64, max
 	board.komi = komi
 	board.maxMoves = maxMoves
 
-	checkBoard = make([]int, board.SentinelBoardMax())
-	Record = make([]int, board.MaxMoves())
-	RecordTime = make([]float64, board.MaxMoves())
-	Dir4 = [4]int{1, board.SentinelWidth(), -1, -board.SentinelWidth()}
+	board.checkBoard = make([]int, board.SentinelBoardMax())
+	board.Record = make([]int, board.MaxMoves())
+	board.RecordTime = make([]float64, board.MaxMoves())
+	board.Dir4 = [4]int{1, board.SentinelWidth(), -1, -board.SentinelWidth()}
 
 	return board
 }
@@ -164,7 +161,7 @@ func (board *Board) PutStone(tIdx int, color int, fillEyeErr int) int {
 		around[dir][0] = 0
 		around[dir][1] = 0
 		around[dir][2] = 0
-		tIdx2 := tIdx + Dir4[dir]
+		tIdx2 := tIdx + board.Dir4[dir]
 		color2 := board.ColorAt(tIdx2)
 		if color2 == 0 {
 			space++
@@ -204,8 +201,8 @@ func (board *Board) PutStone(tIdx int, color int, fillEyeErr int) int {
 	for dir := 0; dir < 4; dir++ {
 		lib := around[dir][0]
 		color2 := around[dir][2]
-		if color2 == unCol && lib == 1 && board.Exists(tIdx+Dir4[dir]) {
-			board.TakeStone(tIdx+Dir4[dir], unCol)
+		if color2 == unCol && lib == 1 && board.Exists(tIdx+board.Dir4[dir]) {
+			board.TakeStone(tIdx+board.Dir4[dir], unCol)
 		}
 	}
 
@@ -254,21 +251,21 @@ func (board Board) CountLiberty(tIdx int, pLiberty *int, stoneCount *int) {
 	boardMax := board.SentinelBoardMax()
 	// 初期化
 	for tIdx2 := 0; tIdx2 < boardMax; tIdx2++ {
-		checkBoard[tIdx2] = 0
+		board.checkBoard[tIdx2] = 0
 	}
 	board.countLibertySub(tIdx, board.data[tIdx], pLiberty, stoneCount)
 }
 
 func (board Board) countLibertySub(tIdx int, color int, pLiberty *int, stoneCount *int) {
-	checkBoard[tIdx] = 1
+	board.checkBoard[tIdx] = 1
 	*stoneCount++
 	for i := 0; i < 4; i++ {
-		tIdx2 := tIdx + Dir4[i]
-		if checkBoard[tIdx2] != 0 {
+		tIdx2 := tIdx + board.Dir4[i]
+		if board.checkBoard[tIdx2] != 0 {
 			continue
 		}
 		if !board.Exists(tIdx2) {
-			checkBoard[tIdx2] = 1
+			board.checkBoard[tIdx2] = 1
 			*pLiberty++
 		}
 		if board.data[tIdx2] == color {
@@ -284,8 +281,8 @@ func (board *Board) AddMoves(tIdx int, color int, sec float64) {
 		fmt.Fprintf(os.Stderr, "(AddMoves) Err=%d\n", err)
 		os.Exit(0)
 	}
-	Record[board.MovesNum] = tIdx
-	RecordTime[board.MovesNum] = sec
+	board.Record[board.MovesNum] = tIdx
+	board.RecordTime[board.MovesNum] = sec
 	board.MovesNum++
 }
 
@@ -425,7 +422,7 @@ func GetXYFromName(name string) (int, int, error) {
 func (board *Board) TakeStone(tIdx int, color int) {
 	board.data[tIdx] = 0
 	for dir := 0; dir < 4; dir++ {
-		tIdx2 := tIdx + Dir4[dir]
+		tIdx2 := tIdx + board.Dir4[dir]
 		if board.data[tIdx2] == color {
 			board.TakeStone(tIdx2, color)
 		}

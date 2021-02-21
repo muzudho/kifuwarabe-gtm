@@ -81,7 +81,7 @@ func (board *Board) countScore(turnColor int) int {
 			mk[1] = 0
 			mk[2] = 0
 			for dir := 0; dir < 4; dir++ {
-				mk[(*board).ColorAt(tIdx+Dir4[dir])]++
+				mk[(*board).ColorAt(tIdx+board.Dir4[dir])]++
 			}
 			if mk[1] != 0 && mk[2] == 0 {
 				blackArea++
