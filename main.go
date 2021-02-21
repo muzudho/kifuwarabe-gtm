@@ -47,6 +47,7 @@ func main() {
 		filepath.Join(*workdir, "output/error.log"),
 		filepath.Join(*workdir, "output/fatal.log"),
 		filepath.Join(*workdir, "output/print.log"))
+	u.G.Log.OpenAllLogs()
 
 	// 既存のログ・ファイルを削除
 	u.G.Log.Trace("...Engine Remove all old logs\n")
@@ -80,6 +81,8 @@ func main() {
 	u.G.Log.Trace("...Engine 何か標準入力しろだぜ☆（＾～＾）\n")
 
 	scanner := bufio.NewScanner(os.Stdin)
+
+MailLoop:
 	for scanner.Scan() {
 		command := scanner.Text()
 		u.G.Log.Notice("-->%s '%s' command\n", config.Profile.Name, command)
@@ -95,7 +98,8 @@ func main() {
 			u.G.Chat.Print("= \n\n")
 		case "quit":
 			u.G.Log.Notice("<--%s Quit\n", config.Profile.Name)
-			os.Exit(0)
+			break MailLoop
+			// os.Exit(0)
 		case "protocol_version":
 			u.G.Log.Notice("<--%s Version ok\n", config.Profile.Name)
 			u.G.Chat.Print("= 2\n\n")
@@ -177,4 +181,7 @@ func main() {
 			u.G.Chat.Print("? unknown_command\n\n")
 		}
 	}
+
+	u.G.Log.Trace("...%s... End engine\n", config.Profile.Name)
+	u.G.Log.CloseAllLogs()
 }

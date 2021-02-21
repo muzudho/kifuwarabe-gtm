@@ -18,6 +18,15 @@ type Logger struct {
 	errorPath  string
 	fatalPath  string
 	printPath  string
+
+	traceFile  *os.File
+	debugFile  *os.File
+	infoFile   *os.File
+	noticeFile *os.File
+	warnFile   *os.File
+	errorFile  *os.File
+	fatalFile  *os.File
+	printFile  *os.File
 }
 
 // NewLogger - ロガーを作成します。
@@ -47,6 +56,84 @@ func NewLogger(
 // Go言語では、 yyyy とかではなく、定められた数をそこに置くのらしい☆（＾～＾）
 const timeStampLayout = "2006-01-02 15:04:05"
 
+// OpenAllLogs - 全てのログ・ファイルを開けます
+func (logger *Logger) OpenAllLogs() error {
+	file, err := logger.openLogFile(logger.tracePath)
+	if err != nil {
+		return err
+	}
+	logger.traceFile = file
+
+	file, err = logger.openLogFile(logger.debugPath)
+	if err != nil {
+		return err
+	}
+	logger.debugFile = file
+
+	file, err = logger.openLogFile(logger.infoPath)
+	if err != nil {
+		return err
+	}
+	logger.infoFile = file
+
+	file, err = logger.openLogFile(logger.noticePath)
+	if err != nil {
+		return err
+	}
+	logger.noticeFile = file
+
+	file, err = logger.openLogFile(logger.warnPath)
+	if err != nil {
+		return err
+	}
+	logger.warnFile = file
+
+	file, err = logger.openLogFile(logger.errorPath)
+	if err != nil {
+		return err
+	}
+	logger.errorFile = file
+
+	file, err = logger.openLogFile(logger.fatalPath)
+	if err != nil {
+		return err
+	}
+	logger.fatalFile = file
+
+	file, err = logger.openLogFile(logger.printPath)
+	if err != nil {
+		return err
+	}
+	logger.printFile = file
+
+	return nil
+}
+
+// OpenAllLogs - 全てのログ・ファイルを開けます
+func (logger *Logger) openLogFile(filePath string) (*os.File, error) {
+	// 追加書込み。
+	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		// ログのファイル・オープン失敗
+		fmt.Fprintf(os.Stderr, "filePath=[%s]\n", filePath)
+		fmt.Fprintf(os.Stderr, "err=[%s]\n", err)
+		return nil, err
+	}
+	return file, nil
+}
+
+// CloseAllLogs - 全てのログ・ファイルを閉じます
+func (logger *Logger) CloseAllLogs() {
+	defer logger.traceFile.Close()
+	defer logger.debugFile.Close()
+	defer logger.infoFile.Close()
+	defer logger.noticeFile.Close()
+	defer logger.warnFile.Close()
+	defer logger.errorFile.Close()
+	defer logger.fatalFile.Close()
+	defer logger.printFile.Close()
+}
+
 // RemoveAllOldLogs - 既存のログファイルを削除します
 // 誤動作防止のため、 basename の末尾が '.log' か、または basename に '.log.' が含まれるものだけ削除できるものとします。
 func (logger *Logger) RemoveAllOldLogs() {
@@ -69,67 +156,53 @@ func (logger *Logger) removeLog(path string) {
 }
 
 // write - ログファイルに書き込みます
-func write(filePath string, text string, args ...interface{}) {
-	// TODO ファイルの開閉回数を減らせないものか。
-	// 追加書込み。
-	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		fmt.Printf("filePath=[%s]\n", filePath)
-		fmt.Printf("text=[%s]\n", text)
-		fmt.Printf("err=[%s]\n", err)
-
-		// ログの書込み失敗は無視します
-		return
-		// panic(err)
-	}
-
+func (logger *Logger) write(file *os.File, text string, args ...interface{}) {
 	// tはtime.Time型
 	t := time.Now()
 
 	s := fmt.Sprintf(text, args...)
 	s = fmt.Sprintf("[%s] %s", t.Format(timeStampLayout), s)
 	fmt.Fprint(file, s)
-	defer file.Close()
 }
 
 // Trace - ログファイルに書き込みます。
 func (logger Logger) Trace(text string, args ...interface{}) {
-	write(logger.tracePath, text, args...)
+	logger.write(logger.traceFile, text, args...)
 }
 
 // Debug - ログファイルに書き込みます。
 func (logger Logger) Debug(text string, args ...interface{}) {
-	write(logger.debugPath, text, args...)
+	logger.write(logger.debugFile, text, args...)
 }
 
 // Info - ログファイルに書き込みます。
 func (logger Logger) Info(text string, args ...interface{}) {
-	write(logger.infoPath, text, args...)
+	logger.write(logger.infoFile, text, args...)
 }
 
 // Notice - ログファイルに書き込みます。
 func (logger Logger) Notice(text string, args ...interface{}) {
-	write(logger.noticePath, text, args...)
+	logger.write(logger.noticeFile, text, args...)
 }
 
 // Warn - ログファイルに書き込みます。
 func (logger Logger) Warn(text string, args ...interface{}) {
-	write(logger.warnPath, text, args...)
+	logger.write(logger.warnFile, text, args...)
 }
 
 // Error - ログファイルに書き込みます。
 func (logger Logger) Error(text string, args ...interface{}) {
-	write(logger.errorPath, text, args...)
+	logger.write(logger.errorFile, text, args...)
 }
 
 // Fatal - ログファイルに書き込みます。
 func (logger Logger) Fatal(text string, args ...interface{}) string {
 	message := fmt.Sprintf(text, args...)
-	write(logger.fatalPath, message)
+	logger.write(logger.fatalFile, message)
 	return message
 }
 
 // Print - ログファイルに書き込みます。 Chatter から呼び出してください。
 func (logger Logger) Print(text string, args ...interface{}) {
-	write(logger.printPath, text, args...)
+	logger.write(logger.printFile, text, args...)
 }
