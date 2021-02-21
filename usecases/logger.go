@@ -1,6 +1,7 @@
 package usecases
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -27,6 +28,15 @@ type Logger struct {
 	errorFile  *os.File
 	fatalFile  *os.File
 	printFile  *os.File
+
+	traceWriter  *bufio.Writer
+	debugWriter  *bufio.Writer
+	infoWriter   *bufio.Writer
+	noticeWriter *bufio.Writer
+	warnWriter   *bufio.Writer
+	errorWriter  *bufio.Writer
+	fatalWriter  *bufio.Writer
+	printWriter  *bufio.Writer
 }
 
 // NewLogger - ロガーを作成します。
@@ -63,48 +73,56 @@ func (logger *Logger) OpenAllLogs() error {
 		return err
 	}
 	logger.traceFile = file
+	logger.traceWriter = bufio.NewWriter(file)
 
 	file, err = logger.openLogFile(logger.debugPath)
 	if err != nil {
 		return err
 	}
 	logger.debugFile = file
+	logger.debugWriter = bufio.NewWriter(file)
 
 	file, err = logger.openLogFile(logger.infoPath)
 	if err != nil {
 		return err
 	}
 	logger.infoFile = file
+	logger.infoWriter = bufio.NewWriter(file)
 
 	file, err = logger.openLogFile(logger.noticePath)
 	if err != nil {
 		return err
 	}
 	logger.noticeFile = file
+	logger.noticeWriter = bufio.NewWriter(file)
 
 	file, err = logger.openLogFile(logger.warnPath)
 	if err != nil {
 		return err
 	}
 	logger.warnFile = file
+	logger.warnWriter = bufio.NewWriter(file)
 
 	file, err = logger.openLogFile(logger.errorPath)
 	if err != nil {
 		return err
 	}
 	logger.errorFile = file
+	logger.errorWriter = bufio.NewWriter(file)
 
 	file, err = logger.openLogFile(logger.fatalPath)
 	if err != nil {
 		return err
 	}
 	logger.fatalFile = file
+	logger.fatalWriter = bufio.NewWriter(file)
 
 	file, err = logger.openLogFile(logger.printPath)
 	if err != nil {
 		return err
 	}
 	logger.printFile = file
+	logger.printWriter = bufio.NewWriter(file)
 
 	return nil
 }
@@ -120,6 +138,18 @@ func (logger *Logger) openLogFile(filePath string) (*os.File, error) {
 		return nil, err
 	}
 	return file, nil
+}
+
+// FlushAllLogs - バッファーに溜まっている分をファイルに書き出します。定期的に行ってください
+func (logger *Logger) FlushAllLogs() {
+	logger.traceWriter.Flush()
+	logger.debugWriter.Flush()
+	logger.infoWriter.Flush()
+	logger.noticeWriter.Flush()
+	logger.warnWriter.Flush()
+	logger.errorWriter.Flush()
+	logger.fatalWriter.Flush()
+	logger.printWriter.Flush()
 }
 
 // CloseAllLogs - 全てのログ・ファイルを閉じます

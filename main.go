@@ -50,9 +50,12 @@ func main() {
 
 	// 既存のログ・ファイルを削除
 	u.G.Log.RemoveAllOldLogs()
-	u.G.Log.OpenAllLogs()
-	u.G.Log.Trace("...Engine Remove all old logs\n")
 
+	// ログ・ファイルの開閉
+	u.G.Log.OpenAllLogs()
+	defer u.G.Log.CloseAllLogs()
+
+	u.G.Log.Trace("...Engine Remove all old logs\n")
 	u.G.Log.Trace("...Engine KifuwarabeGoGo プログラム開始☆（＾～＾）\n")
 	u.G.Log.Trace("...Engine Author: %s\n", u.Author)
 	u.G.Log.Trace("...Engine This is a GTP engine.\n")
@@ -84,6 +87,8 @@ func main() {
 
 MailLoop:
 	for scanner.Scan() {
+		u.G.Log.FlushAllLogs()
+
 		command := scanner.Text()
 		u.G.Log.Notice("-->%s '%s' command\n", config.Profile.Name, command)
 
@@ -183,5 +188,4 @@ MailLoop:
 	}
 
 	u.G.Log.Trace("...%s... End engine\n", config.Profile.Name)
-	u.G.Log.CloseAllLogs()
 }
