@@ -7,6 +7,8 @@ import (
 	"os"
 	"regexp"
 	"strings"
+
+	"github.com/muzudho/kifuwarabe-gtp/entities/stone"
 )
 
 // Record - 棋譜
@@ -28,17 +30,10 @@ const (
 // For count liberty.
 var checkBoard = []int{}
 
-// MovesNum - 手数
-var MovesNum int
-
 var labelOfColumns = []string{"0", "A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"}
 
-// FlipColor - 白黒反転させます。
-func FlipColor(col int) int {
-	return 3 - col
-}
-
 // Board - 盤。
+// 棋譜などの、盤ではないものも含む
 type Board struct {
 	// IBoard
 
@@ -51,6 +46,9 @@ type Board struct {
 
 	// KoIdx - コウの交点。Idx（配列のインデックス）表示。 0 ならコウは無し？
 	KoIdx int
+
+	// MovesNum - 手数
+	MovesNum int
 }
 
 // NewBoard - 盤を作成します。
@@ -90,7 +88,7 @@ func (board *Board) InitBoard() {
 		}
 	}
 
-	MovesNum = 0
+	board.MovesNum = 0
 	board.KoIdx = 0
 }
 
@@ -150,8 +148,8 @@ func (board Board) Exists(tIdx int) bool {
 // PutStone - 石を置きます
 func (board *Board) PutStone(tIdx int, color int, fillEyeErr int) int {
 	var around = [4][3]int{}
-	var liberty, stone int
-	unCol := FlipColor(color)
+	var liberty, stoneCount int
+	unCol := stone.FlipColor(color)
 	space := 0
 	wall := 0
 	mycolSafe := 0
@@ -177,12 +175,12 @@ func (board *Board) PutStone(tIdx int, color int, fillEyeErr int) int {
 		if color2 == 0 || color2 == 3 {
 			continue
 		}
-		board.CountLiberty(tIdx2, &liberty, &stone)
+		board.CountLiberty(tIdx2, &liberty, &stoneCount)
 		around[dir][0] = liberty
-		around[dir][1] = stone
+		around[dir][1] = stoneCount
 		around[dir][2] = color2
 		if color2 == unCol && liberty == 1 {
-			captureSum += stone
+			captureSum += stoneCount
 			koMaybe = tIdx2
 		}
 		if color2 == color && 2 <= liberty {
@@ -213,9 +211,9 @@ func (board *Board) PutStone(tIdx int, color int, fillEyeErr int) int {
 
 	board.SetColor(tIdx, color)
 
-	board.CountLiberty(tIdx, &liberty, &stone)
+	board.CountLiberty(tIdx, &liberty, &stoneCount)
 
-	if captureSum == 1 && stone == 1 && liberty == 1 {
+	if captureSum == 1 && stoneCount == 1 && liberty == 1 {
 		board.KoIdx = koMaybe
 	} else {
 		board.KoIdx = 0
@@ -250,20 +248,20 @@ func (board Board) GetEmptyTIdx() int {
 }
 
 // CountLiberty - 呼吸点を数えます。
-func (board Board) CountLiberty(tIdx int, pLiberty *int, pStone *int) {
+func (board Board) CountLiberty(tIdx int, pLiberty *int, stoneCount *int) {
 	*pLiberty = 0
-	*pStone = 0
+	*stoneCount = 0
 	boardMax := board.SentinelBoardMax()
 	// 初期化
 	for tIdx2 := 0; tIdx2 < boardMax; tIdx2++ {
 		checkBoard[tIdx2] = 0
 	}
-	board.countLibertySub(tIdx, board.data[tIdx], pLiberty, pStone)
+	board.countLibertySub(tIdx, board.data[tIdx], pLiberty, stoneCount)
 }
 
-func (board Board) countLibertySub(tIdx int, color int, pLiberty *int, pStone *int) {
+func (board Board) countLibertySub(tIdx int, color int, pLiberty *int, stoneCount *int) {
 	checkBoard[tIdx] = 1
-	*pStone++
+	*stoneCount++
 	for i := 0; i < 4; i++ {
 		tIdx2 := tIdx + Dir4[i]
 		if checkBoard[tIdx2] != 0 {
@@ -274,7 +272,7 @@ func (board Board) countLibertySub(tIdx int, color int, pLiberty *int, pStone *i
 			*pLiberty++
 		}
 		if board.data[tIdx2] == color {
-			board.countLibertySub(tIdx2, color, pLiberty, pStone)
+			board.countLibertySub(tIdx2, color, pLiberty, stoneCount)
 		}
 	}
 }
@@ -286,9 +284,9 @@ func (board *Board) AddMoves(tIdx int, color int, sec float64) {
 		fmt.Fprintf(os.Stderr, "(AddMoves) Err=%d\n", err)
 		os.Exit(0)
 	}
-	Record[MovesNum] = tIdx
-	RecordTime[MovesNum] = sec
-	MovesNum++
+	Record[board.MovesNum] = tIdx
+	RecordTime[board.MovesNum] = sec
+	board.MovesNum++
 }
 
 // Komi - コミ

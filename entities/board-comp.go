@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math/rand"
 	"time"
+
+	"github.com/muzudho/kifuwarabe-gtp/entities/stone"
 )
 
 // AllPlayouts - プレイアウトした回数
@@ -57,7 +59,7 @@ func (board *Board) Playout(turnColor int, printBoard func(*Board)) int {
 		// printBoard()
 		// fmt.Printf("loop=%d,tIdx=%s,c=%d,emptyNum=%d,Ko=%s\n",
 		// 	loop, e.GetNameFromXY(tIdx), color, emptyNum, e.GetNameFromXY(board.KoIdx()))
-		color = FlipColor(color)
+		color = stone.FlipColor(color)
 	}
 	return board.countScore(turnColor)
 }
@@ -136,7 +138,7 @@ func (board *Board) PrimitiveMonteCalro(color int, printBoard func(*Board)) int 
 				var boardCopy2 = (*board).CopyData()
 				koZCopy2 := board.KoIdx
 
-				win := -board.Playout(FlipColor(color), printBoard)
+				win := -board.Playout(stone.FlipColor(color), printBoard)
 
 				winSum += win
 				board.KoIdx = koZCopy2
@@ -163,6 +165,6 @@ func GetComputerMove(board *Board, color int, fUCT int, printBoard func(*Board))
 	tIdx = board.PrimitiveMonteCalro(color, printBoard)
 	sec := time.Since(start).Seconds()
 	fmt.Printf("(GetComputerMove) %.1f sec, %.0f playout/sec, play=%s,moves=%d,color=%d,playouts=%d,fUCT=%d\n",
-		sec, float64(AllPlayouts)/sec, (*board).GetNameFromTIdx(tIdx), MovesNum, color, AllPlayouts, fUCT)
+		sec, float64(AllPlayouts)/sec, (*board).GetNameFromTIdx(tIdx), board.MovesNum, color, AllPlayouts, fUCT)
 	return tIdx
 }

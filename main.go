@@ -123,7 +123,7 @@ func main() {
 				color = 2
 			}
 			tIdx := u.PlayComputerMove(board, color, 1, presenter.PrintBoard)
-			presenter.PrintBoardHeader(board, e.MovesNum)
+			presenter.PrintBoardHeader(board, board.MovesNum)
 			presenter.PrintBoard(board)
 
 			bestmoveString := p.GetPointName(board, tIdx)
@@ -165,7 +165,7 @@ func main() {
 					// u.G.Log.Trace("...Engine file=%d rank=%d\n", x+1, y+1)
 				}
 				board.AddMoves(tIdx, color, 0)
-				presenter.PrintBoardHeader(board, e.MovesNum)
+				presenter.PrintBoardHeader(board, board.MovesNum)
 				presenter.PrintBoard(board)
 
 				u.G.Log.Notice("<--%s ok\n", config.Profile.Name)
