@@ -188,53 +188,52 @@ func (logger *Logger) removeLog(path string) {
 }
 
 // write - ログファイルに書き込みます
-func (logger *Logger) write(file *os.File, text string, args ...interface{}) {
+func (logger *Logger) write(writer *bufio.Writer, text string, args ...interface{}) {
 	// tはtime.Time型
 	t := time.Now()
 
 	s := fmt.Sprintf(text, args...)
 	s = fmt.Sprintf("[%s] %s", t.Format(timeStampLayout), s)
-	fmt.Fprint(file, s)
+	writer.WriteString(s)
 }
 
 // Trace - ログファイルに書き込みます。
 func (logger Logger) Trace(text string, args ...interface{}) {
-	logger.traceWriter.WriteString(fmt.Sprintf(text, args...))
+	logger.write(logger.traceWriter, text, args...)
 }
 
 // Debug - ログファイルに書き込みます。
 func (logger Logger) Debug(text string, args ...interface{}) {
-	logger.debugWriter.WriteString(fmt.Sprintf(text, args...))
+	logger.write(logger.debugWriter, text, args...)
 }
 
 // Info - ログファイルに書き込みます。
 func (logger Logger) Info(text string, args ...interface{}) {
-	logger.infoWriter.WriteString(fmt.Sprintf(text, args...))
+	logger.write(logger.infoWriter, text, args...)
 }
 
 // Notice - ログファイルに書き込みます。
 func (logger Logger) Notice(text string, args ...interface{}) {
-	logger.noticeWriter.WriteString(fmt.Sprintf(text, args...))
+	logger.write(logger.noticeWriter, text, args...)
 }
 
 // Warn - ログファイルに書き込みます。
 func (logger Logger) Warn(text string, args ...interface{}) {
-	logger.warnWriter.WriteString(fmt.Sprintf(text, args...))
+	logger.write(logger.warnWriter, text, args...)
 }
 
 // Error - ログファイルに書き込みます。
 func (logger Logger) Error(text string, args ...interface{}) {
-	logger.errorWriter.WriteString(fmt.Sprintf(text, args...))
+	logger.write(logger.errorWriter, text, args...)
 }
 
 // Fatal - ログファイルに書き込みます。
 func (logger Logger) Fatal(text string, args ...interface{}) string {
-	message := fmt.Sprintf(text, args...)
-	logger.fatalWriter.WriteString(message)
-	return message
+	logger.write(logger.fatalWriter, text, args...)
+	return fmt.Sprintf(text, args...)
 }
 
 // Print - ログファイルに書き込みます。 Chatter から呼び出してください。
 func (logger Logger) Print(text string, args ...interface{}) {
-	logger.printWriter.WriteString(fmt.Sprintf(text, args...))
+	logger.write(logger.printWriter, text, args...)
 }
