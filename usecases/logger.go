@@ -74,6 +74,8 @@ func write(filePath string, text string, args ...interface{}) {
 	// 追加書込み。
 	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
+		print("filePath=[%s]\n", filePath)
+		print("text=[%s]\n", text)
 		panic(err)
 	}
 
