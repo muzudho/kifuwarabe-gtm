@@ -154,6 +154,8 @@ func (logger *Logger) FlushAllLogs() {
 
 // CloseAllLogs - 全てのログ・ファイルを閉じます
 func (logger *Logger) CloseAllLogs() {
+	logger.FlushAllLogs()
+
 	defer logger.traceFile.Close()
 	defer logger.debugFile.Close()
 	defer logger.infoFile.Close()
@@ -197,42 +199,42 @@ func (logger *Logger) write(file *os.File, text string, args ...interface{}) {
 
 // Trace - ログファイルに書き込みます。
 func (logger Logger) Trace(text string, args ...interface{}) {
-	logger.write(logger.traceFile, text, args...)
+	logger.traceWriter.WriteString(fmt.Sprintf(text, args...))
 }
 
 // Debug - ログファイルに書き込みます。
 func (logger Logger) Debug(text string, args ...interface{}) {
-	logger.write(logger.debugFile, text, args...)
+	logger.debugWriter.WriteString(fmt.Sprintf(text, args...))
 }
 
 // Info - ログファイルに書き込みます。
 func (logger Logger) Info(text string, args ...interface{}) {
-	logger.write(logger.infoFile, text, args...)
+	logger.infoWriter.WriteString(fmt.Sprintf(text, args...))
 }
 
 // Notice - ログファイルに書き込みます。
 func (logger Logger) Notice(text string, args ...interface{}) {
-	logger.write(logger.noticeFile, text, args...)
+	logger.noticeWriter.WriteString(fmt.Sprintf(text, args...))
 }
 
 // Warn - ログファイルに書き込みます。
 func (logger Logger) Warn(text string, args ...interface{}) {
-	logger.write(logger.warnFile, text, args...)
+	logger.warnWriter.WriteString(fmt.Sprintf(text, args...))
 }
 
 // Error - ログファイルに書き込みます。
 func (logger Logger) Error(text string, args ...interface{}) {
-	logger.write(logger.errorFile, text, args...)
+	logger.errorWriter.WriteString(fmt.Sprintf(text, args...))
 }
 
 // Fatal - ログファイルに書き込みます。
 func (logger Logger) Fatal(text string, args ...interface{}) string {
 	message := fmt.Sprintf(text, args...)
-	logger.write(logger.fatalFile, message)
+	logger.fatalWriter.WriteString(message)
 	return message
 }
 
 // Print - ログファイルに書き込みます。 Chatter から呼び出してください。
 func (logger Logger) Print(text string, args ...interface{}) {
-	logger.write(logger.printFile, text, args...)
+	logger.printWriter.WriteString(fmt.Sprintf(text, args...))
 }
