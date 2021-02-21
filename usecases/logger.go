@@ -74,9 +74,13 @@ func write(filePath string, text string, args ...interface{}) {
 	// 追加書込み。
 	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		print("filePath=[%s]\n", filePath)
-		print("text=[%s]\n", text)
-		panic(err)
+		fmt.Printf("filePath=[%s]\n", filePath)
+		fmt.Printf("text=[%s]\n", text)
+		fmt.Printf("err=[%s]\n", err)
+
+		// ログの書込み失敗は無視します
+		return
+		// panic(err)
 	}
 
 	// tはtime.Time型
