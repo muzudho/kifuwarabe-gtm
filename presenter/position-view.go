@@ -8,10 +8,6 @@ import (
 	u "github.com/muzudho/kifuwarabe-gtp/usecases"
 )
 
-// BoardView - 表示機能 Version 9a.
-type BoardView struct {
-}
-
 // labelOfColumns - 各列の表示符号。
 // I は欠番です。
 var labelOfColumns = [20]byte{'@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J',
@@ -26,13 +22,13 @@ var labelOfRows = [20]string{" 0", " 1", " 2", " 3", " 4", " 5", " 6", " 7", " 8
 var stoneLabels = [4]string{" .", " x", " o", " #"}
 
 // PrintBoardHeader - 手数などを表示
-func PrintBoardHeader(board *e.Board, movesNum int) {
-	u.G.StderrChat.Info("[ Ko=%s MovesNum=%d ]\n", (*board).GetNameFromTIdx(board.KoIdx), movesNum)
+func PrintBoardHeader(position *e.Position, movesNum int) {
+	u.G.StderrChat.Info("[ Ko=%s MovesNum=%d ]\n", (*position).GetNameFromTIdx(position.KoIdx), movesNum)
 }
 
 // PrintBoard - 盤を描画
-func PrintBoard(board *e.Board) {
-	boardSize := (*board).BoardSize()
+func PrintBoard(position *e.Position) {
+	boardSize := (*position).BoardSize()
 
 	var b strings.Builder
 	b.Grow(3 * boardSize) // だいたい適当
@@ -49,7 +45,7 @@ func PrintBoard(board *e.Board) {
 	for y := 0; y < boardSize; y++ {
 		b.WriteString(fmt.Sprintf("%s|", labelOfRows[y+1]))
 		for x := 0; x < boardSize; x++ {
-			b.WriteString(fmt.Sprintf("%s", stoneLabels[(*board).ColorAtFileRank(x+1, y+1)]))
+			b.WriteString(fmt.Sprintf("%s", stoneLabels[(*position).ColorAtFileRank(x+1, y+1)]))
 		}
 		b.WriteString("|\n")
 	}
@@ -63,14 +59,14 @@ func PrintBoard(board *e.Board) {
 }
 
 // PrintSgf - SGF形式の棋譜表示
-func PrintSgf(board *e.Board, movesNum int, record []int) {
-	boardSize := board.BoardSize()
+func PrintSgf(position *e.Position, movesNum int, record []int) {
+	boardSize := position.BoardSize()
 
-	fmt.Printf("(;GM[1]SZ[%d]KM[%.1f]PB[]PW[]\n", boardSize, board.Komi())
+	fmt.Printf("(;GM[1]SZ[%d]KM[%.1f]PB[]PW[]\n", boardSize, position.Komi())
 	for i := 0; i < movesNum; i++ {
 		tIdx := record[i]
-		y := tIdx / board.SentinelWidth()
-		x := tIdx - y*board.SentinelWidth()
+		y := tIdx / position.SentinelWidth()
+		x := tIdx - y*position.SentinelWidth()
 		var sStone = [2]string{"B", "W"}
 		fmt.Printf(";%s", sStone[i&1])
 		if tIdx == 0 {
@@ -86,18 +82,15 @@ func PrintSgf(board *e.Board, movesNum int, record []int) {
 }
 
 // GetPointName - YX座標の文字表示？ A1 とか
-func GetPointName(board *e.Board, tIdx int) string {
+func GetPointName(position *e.Position, tIdx int) string {
 	if tIdx == 0 {
 		return "pass"
 	}
 
-	// boardSize := board.BoardSize()
-
-	y := tIdx / (*board).SentinelWidth()
-	x := tIdx - y*(*board).SentinelWidth()
+	y := tIdx / (*position).SentinelWidth()
+	x := tIdx - y*(*position).SentinelWidth()
 
 	ax := labelOfColumns[x]
 
-	//return string(ax) + string(boardSize+1-y+'0')
 	return fmt.Sprintf("%c%d", ax, y)
 }

@@ -67,14 +67,12 @@ func main() {
 	// TODO ファイルが存在しなければ、強制終了します。
 	config := ui.LoadEngineConf(engineConfPath)
 
-	board := e.NewBoard(config.GetBoardArray(), config.BoardSize(), config.SentinelBoardMax(), config.Komi(), config.MaxMoves())
-	e.UctChildrenSize = config.BoardSize()*config.BoardSize() + 1
-
-	u.G.Log.Trace("...Engine board.BoardSize()=%d\n", board.BoardSize())
-	u.G.Log.Trace("...Engine board.SentinelBoardMax()=%d\n", board.SentinelBoardMax())
-
 	rand.Seed(time.Now().UnixNano())
-	board.InitBoard()
+
+	position := e.NewPosition(config.GetBoardArray(), config.BoardSize(), config.SentinelBoardMax(), config.Komi(), config.MaxMoves())
+	u.G.Log.Trace("...Engine position.BoardSize()=%d\n", position.BoardSize())
+	u.G.Log.Trace("...Engine position.SentinelBoardMax()=%d\n", position.SentinelBoardMax())
+	e.UctChildrenSize = config.BoardSize()*config.BoardSize() + 1
 
 	u.G.Log.Trace("...Engine 何か標準入力しろだぜ☆（＾～＾）\n")
 
@@ -89,7 +87,7 @@ func main() {
 			u.G.Log.Notice("<--%s ok\n", config.Profile.Name)
 			u.G.Chat.Print("= \n\n")
 		case "clear_board":
-			board.InitBoard()
+			position = e.NewPosition(config.GetBoardArray(), config.BoardSize(), config.SentinelBoardMax(), config.Komi(), config.MaxMoves())
 			u.G.Log.Notice("<--%s ok\n", config.Profile.Name)
 			u.G.Chat.Print("= \n\n")
 		case "quit":
@@ -122,11 +120,11 @@ func main() {
 			if 1 < len(tokens) && strings.ToLower(tokens[1]) == "w" {
 				color = 2
 			}
-			tIdx := u.PlayComputerMove(board, color, 1, presenter.PrintBoard)
-			presenter.PrintBoardHeader(board, board.MovesNum)
-			presenter.PrintBoard(board)
+			tIdx := u.PlayComputerMove(position, color, 1, presenter.PrintBoard)
+			presenter.PrintBoardHeader(position, position.MovesNum)
+			presenter.PrintBoard(position)
 
-			bestmoveString := p.GetPointName(board, tIdx)
+			bestmoveString := p.GetPointName(position, tIdx)
 
 			u.G.Log.Notice("<--%s [%s] ok\n", config.Profile.Name, bestmoveString)
 			u.G.Chat.Print("= %s\n\n", bestmoveString)
@@ -160,13 +158,13 @@ func main() {
 						panic(u.G.Log.Fatal(err.Error()))
 					}
 
-					tIdx = board.GetTIdxFromFileRank(x+1, y+1)
+					tIdx = position.GetTIdxFromFileRank(x+1, y+1)
 
 					// u.G.Log.Trace("...Engine file=%d rank=%d\n", x+1, y+1)
 				}
-				board.AddMoves(tIdx, color, 0)
-				presenter.PrintBoardHeader(board, board.MovesNum)
-				presenter.PrintBoard(board)
+				position.AddMoves(tIdx, color, 0)
+				presenter.PrintBoardHeader(position, position.MovesNum)
+				presenter.PrintBoard(position)
 
 				u.G.Log.Notice("<--%s ok\n", config.Profile.Name)
 				u.G.Chat.Print("= \n\n")

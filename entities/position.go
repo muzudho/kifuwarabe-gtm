@@ -20,130 +20,123 @@ const (
 
 var labelOfColumns = []string{"0", "A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"}
 
-// Board - 盤。
-// 棋譜などの、盤ではないものも含む
-type Board struct {
-	// IBoard
-
-	data             []int
+// Position - 局面
+// 盤面や、棋譜を含む
+type Position struct {
+	boardData        []int
 	boardSize        int
 	sentinelWidth    int
 	sentinelBoardMax int
-	komi             float64
-	maxMoves         int
-
+	// For count liberty.
+	checkBoard []int
 	// KoIdx - コウの交点。Idx（配列のインデックス）表示。 0 ならコウは無し？
 	KoIdx int
+	// Dir4 - ４方向（右、下、左、上）の番地。初期値は仮の値。
+	Dir4 [4]int
+
+	komi     float64
+	maxMoves int
 
 	// MovesNum - 手数
 	MovesNum int
-	// For count liberty.
-	checkBoard []int
 	// Record - 棋譜
 	Record []int
 
 	// RecordTime - 一手にかかった時間。
 	RecordTime []float64
-	// Dir4 - ４方向（右、下、左、上）の番地。初期値は仮の値。
-	Dir4 [4]int
 }
 
-// NewBoard - 盤を作成します。
-func NewBoard(data []int, boardSize int, sentinelBoardMax int, komi float64, maxMoves int) *Board {
-	board := new(Board)
-	board.data = data
-	board.boardSize = boardSize
-	board.sentinelWidth = boardSize + 2
-	board.sentinelBoardMax = sentinelBoardMax
-	board.komi = komi
-	board.maxMoves = maxMoves
+// NewPosition - 盤を作成します。
+func NewPosition(boardData []int, boardSize int, sentinelBoardMax int, komi float64, maxMoves int) *Position {
+	position := new(Position)
+	position.boardData = boardData
+	position.boardSize = boardSize
+	position.sentinelWidth = boardSize + 2
+	position.sentinelBoardMax = sentinelBoardMax
+	position.komi = komi
+	position.maxMoves = maxMoves
 
-	board.checkBoard = make([]int, board.SentinelBoardMax())
-	board.Record = make([]int, board.MaxMoves())
-	board.RecordTime = make([]float64, board.MaxMoves())
-	board.Dir4 = [4]int{1, board.SentinelWidth(), -1, -board.SentinelWidth()}
-
-	return board
-}
-
-// ⚡　盤について
-
-// InitBoard - 盤の初期化
-func (board *Board) InitBoard() {
-	boardMax := board.SentinelBoardMax()
-	boardSize := board.BoardSize()
+	boardMax := position.SentinelBoardMax()
+	position.checkBoard = make([]int, boardMax)
+	position.Record = make([]int, position.MaxMoves())
+	position.RecordTime = make([]float64, position.MaxMoves())
+	position.Dir4 = [4]int{1, position.SentinelWidth(), -1, -position.SentinelWidth()}
 
 	// 盤を 枠線　で埋めます
 	for tIdx := 0; tIdx < boardMax; tIdx++ {
-		board.SetColor(tIdx, 3)
+		position.SetColor(tIdx, 3)
 	}
 
 	// 盤上に石を置きます
 	for y := 0; y < boardSize; y++ {
 		for x := 0; x < boardSize; x++ {
-			board.SetColor(board.GetTIdxFromFileRank(x+1, y+1), 0)
+			position.SetColor(position.GetTIdxFromFileRank(x+1, y+1), 0)
 		}
 	}
 
-	board.MovesNum = 0
-	board.KoIdx = 0
+	position.MovesNum = 0
+	position.KoIdx = 0
+
+	return position
 }
 
+// ⚡　盤について
+
 // CopyData - 盤データのコピー。
-func (board Board) CopyData() []int {
-	boardMax := board.SentinelBoardMax()
+func (position Position) CopyData() []int {
+	boardMax := position.SentinelBoardMax()
 
 	var boardCopy2 = make([]int, boardMax)
-	copy(boardCopy2[:], board.data[:])
+	copy(boardCopy2[:], position.boardData[:])
 	return boardCopy2
 }
 
 // ImportData - 盤データのコピー。
-func (board *Board) ImportData(boardCopy2 []int) {
-	copy(board.data[:], boardCopy2[:])
+func (position *Position) ImportData(boardCopy2 []int) {
+	copy(position.boardData[:], boardCopy2[:])
 }
 
 // BoardSize - 何路盤か
-func (board Board) BoardSize() int {
-	return board.boardSize
+func (position Position) BoardSize() int {
+	return position.boardSize
 }
 
 // SentinelWidth - 枠付きの盤の一辺の交点数
-func (board Board) SentinelWidth() int {
-	return board.sentinelWidth
+func (position Position) SentinelWidth() int {
+	return position.sentinelWidth
 }
 
 // SentinelBoardMax - 枠付きの盤の交点数
-func (board Board) SentinelBoardMax() int {
-	return board.sentinelBoardMax
+func (position Position) SentinelBoardMax() int {
+	return position.sentinelBoardMax
 }
 
 // ⚡ 交点について
 
 // ColorAt - 指定した交点の石の色
-func (board Board) ColorAt(tIdx int) int {
-	return board.data[tIdx]
+func (position Position) ColorAt(tIdx int) int {
+	return position.boardData[tIdx]
 }
 
 // ColorAtFileRank - 指定した交点の石の色
 // * `file` - 1 Origin.
 // * `rank` - 1 Origin.
-func (board Board) ColorAtFileRank(file int, rank int) int {
-	return board.data[rank*board.sentinelWidth+file]
+func (position Position) ColorAtFileRank(file int, rank int) int {
+	return position.boardData[rank*position.sentinelWidth+file]
 }
 
 // SetColor - 盤データ
-func (board *Board) SetColor(tIdx int, color int) {
-	board.data[tIdx] = color
+func (position *Position) SetColor(tIdx int, color int) {
+	position.boardData[tIdx] = color
 }
 
 // Exists - 指定の交点に石があるか？
-func (board Board) Exists(tIdx int) bool {
-	return board.data[tIdx] != 0
+func (position Position) Exists(tIdx int) bool {
+	return position.boardData[tIdx] != 0
 }
 
 // PutStone - 石を置きます
-func (board *Board) PutStone(tIdx int, color int, fillEyeErr int) int {
+func (position *Position) PutStone(tIdx int, color int, fillEyeErr int) int {
 	var around = [4][3]int{}
 	var liberty, stoneCount int
 	unCol := stone.FlipColor(color)
@@ -154,15 +147,15 @@ func (board *Board) PutStone(tIdx int, color int, fillEyeErr int) int {
 	koMaybe := 0
 
 	if tIdx == 0 {
-		board.KoIdx = 0
+		position.KoIdx = 0
 		return 0
 	}
 	for dir := 0; dir < 4; dir++ {
 		around[dir][0] = 0
 		around[dir][1] = 0
 		around[dir][2] = 0
-		tIdx2 := tIdx + board.Dir4[dir]
-		color2 := board.ColorAt(tIdx2)
+		tIdx2 := tIdx + position.Dir4[dir]
+		color2 := position.ColorAt(tIdx2)
 		if color2 == 0 {
 			space++
 		}
@@ -172,7 +165,7 @@ func (board *Board) PutStone(tIdx int, color int, fillEyeErr int) int {
 		if color2 == 0 || color2 == 3 {
 			continue
 		}
-		board.CountLiberty(tIdx2, &liberty, &stoneCount)
+		position.CountLiberty(tIdx2, &liberty, &stoneCount)
 		around[dir][0] = liberty
 		around[dir][1] = stoneCount
 		around[dir][2] = color2
@@ -188,56 +181,56 @@ func (board *Board) PutStone(tIdx int, color int, fillEyeErr int) int {
 	if captureSum == 0 && space == 0 && mycolSafe == 0 {
 		return 1
 	}
-	if tIdx == board.KoIdx {
+	if tIdx == position.KoIdx {
 		return 2
 	}
 	if wall+mycolSafe == 4 && fillEyeErr == DoNotFillEye {
 		return 3
 	}
-	if board.Exists(tIdx) {
+	if position.Exists(tIdx) {
 		return 4
 	}
 
 	for dir := 0; dir < 4; dir++ {
 		lib := around[dir][0]
 		color2 := around[dir][2]
-		if color2 == unCol && lib == 1 && board.Exists(tIdx+board.Dir4[dir]) {
-			board.TakeStone(tIdx+board.Dir4[dir], unCol)
+		if color2 == unCol && lib == 1 && position.Exists(tIdx+position.Dir4[dir]) {
+			position.TakeStone(tIdx+position.Dir4[dir], unCol)
 		}
 	}
 
-	board.SetColor(tIdx, color)
+	position.SetColor(tIdx, color)
 
-	board.CountLiberty(tIdx, &liberty, &stoneCount)
+	position.CountLiberty(tIdx, &liberty, &stoneCount)
 
 	if captureSum == 1 && stoneCount == 1 && liberty == 1 {
-		board.KoIdx = koMaybe
+		position.KoIdx = koMaybe
 	} else {
-		board.KoIdx = 0
+		position.KoIdx = 0
 	}
 	return 0
 }
 
 // GetTIdxFromFileRank - x,y を tIdx（配列のインデックス）へ変換します。
-func (board Board) GetTIdxFromFileRank(file int, rank int) int {
-	return rank*board.SentinelWidth() + file
+func (position Position) GetTIdxFromFileRank(file int, rank int) int {
+	return rank*position.SentinelWidth() + file
 }
 
 // GetNameFromTIdx -
-func (board Board) GetNameFromTIdx(tIdx int) string {
-	file, rank := board.GetFileRankFromTIdx(tIdx)
+func (position Position) GetNameFromTIdx(tIdx int) string {
+	file, rank := position.GetFileRankFromTIdx(tIdx)
 	return GetNameFromFileRank(file, rank)
 }
 
 // GetEmptyTIdx - 空点の tIdx（配列のインデックス）を返します。
-func (board Board) GetEmptyTIdx() int {
+func (position Position) GetEmptyTIdx() int {
 	var x, y, tIdx int
 	for {
 		// ランダムに交点を選んで、空点を見つけるまで繰り返します。
 		x = rand.Intn(9)
 		y = rand.Intn(9)
-		tIdx = board.GetTIdxFromFileRank(x+1, y+1)
-		if !board.Exists(tIdx) {
+		tIdx = position.GetTIdxFromFileRank(x+1, y+1)
+		if !position.Exists(tIdx) {
 			break
 		}
 	}
@@ -245,55 +238,55 @@ func (board Board) GetEmptyTIdx() int {
 }
 
 // CountLiberty - 呼吸点を数えます。
-func (board Board) CountLiberty(tIdx int, pLiberty *int, stoneCount *int) {
+func (position Position) CountLiberty(tIdx int, pLiberty *int, stoneCount *int) {
 	*pLiberty = 0
 	*stoneCount = 0
-	boardMax := board.SentinelBoardMax()
+	boardMax := position.SentinelBoardMax()
 	// 初期化
 	for tIdx2 := 0; tIdx2 < boardMax; tIdx2++ {
-		board.checkBoard[tIdx2] = 0
+		position.checkBoard[tIdx2] = 0
 	}
-	board.countLibertySub(tIdx, board.data[tIdx], pLiberty, stoneCount)
+	position.countLibertySub(tIdx, position.boardData[tIdx], pLiberty, stoneCount)
 }
 
-func (board Board) countLibertySub(tIdx int, color int, pLiberty *int, stoneCount *int) {
-	board.checkBoard[tIdx] = 1
+func (position Position) countLibertySub(tIdx int, color int, pLiberty *int, stoneCount *int) {
+	position.checkBoard[tIdx] = 1
 	*stoneCount++
 	for i := 0; i < 4; i++ {
-		tIdx2 := tIdx + board.Dir4[i]
-		if board.checkBoard[tIdx2] != 0 {
+		tIdx2 := tIdx + position.Dir4[i]
+		if position.checkBoard[tIdx2] != 0 {
 			continue
 		}
-		if !board.Exists(tIdx2) {
-			board.checkBoard[tIdx2] = 1
+		if !position.Exists(tIdx2) {
+			position.checkBoard[tIdx2] = 1
 			*pLiberty++
 		}
-		if board.data[tIdx2] == color {
-			board.countLibertySub(tIdx2, color, pLiberty, stoneCount)
+		if position.boardData[tIdx2] == color {
+			position.countLibertySub(tIdx2, color, pLiberty, stoneCount)
 		}
 	}
 }
 
 // AddMoves - 指し手の追加？
-func (board *Board) AddMoves(tIdx int, color int, sec float64) {
-	err := (*board).PutStone(tIdx, color, MayFillEye)
+func (position *Position) AddMoves(tIdx int, color int, sec float64) {
+	err := (*position).PutStone(tIdx, color, MayFillEye)
 	if err != 0 {
 		fmt.Fprintf(os.Stderr, "(AddMoves) Err=%d\n", err)
 		os.Exit(0)
 	}
-	board.Record[board.MovesNum] = tIdx
-	board.RecordTime[board.MovesNum] = sec
-	board.MovesNum++
+	position.Record[position.MovesNum] = tIdx
+	position.RecordTime[position.MovesNum] = sec
+	position.MovesNum++
 }
 
 // Komi - コミ
-func (board Board) Komi() float64 {
-	return board.komi
+func (position Position) Komi() float64 {
+	return position.komi
 }
 
 // MaxMoves - 最大手数
-func (board Board) MaxMoves() int {
-	return board.maxMoves
+func (position Position) MaxMoves() int {
+	return position.maxMoves
 }
 
 // GetNameFromFileRank - (1,1) を "A1" に変換
@@ -302,8 +295,8 @@ func GetNameFromFileRank(file int, rank int) string {
 }
 
 // GetFileRankFromTIdx - tIdx（配列のインデックス）を、file, rank へ変換します。
-func (board Board) GetFileRankFromTIdx(tIdx int) (int, int) {
-	return tIdx % board.SentinelWidth(), tIdx / board.SentinelWidth()
+func (position Position) GetFileRankFromTIdx(tIdx int) (int, int) {
+	return tIdx % position.SentinelWidth(), tIdx / position.SentinelWidth()
 }
 
 // GetXYFromName - "A1" を (1,1) に変換します
@@ -419,12 +412,12 @@ func GetXYFromName(name string) (int, int, error) {
 }
 
 // TakeStone - 石を打ち上げ（取り上げ、取り除き）ます。
-func (board *Board) TakeStone(tIdx int, color int) {
-	board.data[tIdx] = 0
+func (position *Position) TakeStone(tIdx int, color int) {
+	position.boardData[tIdx] = 0
 	for dir := 0; dir < 4; dir++ {
-		tIdx2 := tIdx + board.Dir4[dir]
-		if board.data[tIdx2] == color {
-			board.TakeStone(tIdx2, color)
+		tIdx2 := tIdx + position.Dir4[dir]
+		if position.boardData[tIdx2] == color {
+			position.TakeStone(tIdx2, color)
 		}
 	}
 }
