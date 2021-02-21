@@ -47,11 +47,11 @@ func main() {
 		filepath.Join(*workdir, "output/error.log"),
 		filepath.Join(*workdir, "output/fatal.log"),
 		filepath.Join(*workdir, "output/print.log"))
-	u.G.Log.OpenAllLogs()
 
 	// 既存のログ・ファイルを削除
-	u.G.Log.Trace("...Engine Remove all old logs\n")
 	u.G.Log.RemoveAllOldLogs()
+	u.G.Log.OpenAllLogs()
+	u.G.Log.Trace("...Engine Remove all old logs\n")
 
 	u.G.Log.Trace("...Engine KifuwarabeGoGo プログラム開始☆（＾～＾）\n")
 	u.G.Log.Trace("...Engine Author: %s\n", u.Author)
