@@ -1,4 +1,4 @@
-# Install
+# Set up App on Windows
 
 ## Go言語のインストール
 
@@ -55,3 +55,17 @@ gore>
 ```
 
 `[Ctrl] + [D]` で終了。  
+
+## Install
+
+Build:  
+
+```shell
+# 使っていないパッケージを、インストールのリストから削除するなら
+# go mod tidy
+
+# 自作のパッケージを更新(再インストール)したいなら
+# go get -u all
+
+go build
+```
