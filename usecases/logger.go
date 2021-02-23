@@ -206,48 +206,16 @@ func (logger *Logger) CloseAllLogs() error {
 
 // RemoveAllOldLogs - 既存のログファイルを削除します
 // 誤動作防止のため、 basename の末尾が '.log' か、または basename に '.log.' が含まれるものだけ削除できるものとします。
-func (logger *Logger) RemoveAllOldLogs() error {
-	err := logger.removeLog(logger.tracePath)
-	if err != nil {
-		return err
-	}
-
-	err = logger.removeLog(logger.debugPath)
-	if err != nil {
-		return err
-	}
-
-	err = logger.removeLog(logger.infoPath)
-	if err != nil {
-		return err
-	}
-
-	err = logger.removeLog(logger.noticePath)
-	if err != nil {
-		return err
-	}
-
-	err = logger.removeLog(logger.warnPath)
-	if err != nil {
-		return err
-	}
-
-	err = logger.removeLog(logger.errorPath)
-	if err != nil {
-		return err
-	}
-
-	err = logger.removeLog(logger.fatalPath)
-	if err != nil {
-		return err
-	}
-
-	err = logger.removeLog(logger.printPath)
-	if err != nil {
-		return err
-	}
-
-	return nil
+func (logger *Logger) RemoveAllOldLogs() {
+	// ファイルの削除に失敗しても、無視します。例えば、まだファイルが無いときは失敗します
+	logger.removeLog(logger.tracePath)
+	logger.removeLog(logger.debugPath)
+	logger.removeLog(logger.infoPath)
+	logger.removeLog(logger.noticePath)
+	logger.removeLog(logger.warnPath)
+	logger.removeLog(logger.errorPath)
+	logger.removeLog(logger.fatalPath)
+	logger.removeLog(logger.printPath)
 }
 
 // 誤動作防止のため、 basename の末尾が '.log' か、または basename に '.log.' が含まれるものだけ削除できるものとします。

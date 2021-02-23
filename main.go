@@ -34,31 +34,48 @@ func main() {
 	flag.Parse()
 	engineConfPath := filepath.Join(*workdir, "input/engine.conf.toml")
 
+	tracePath := filepath.Join(*workdir, "output/trace.log")
+	debugPath := filepath.Join(*workdir, "output/debug.log")
+	infoPath := filepath.Join(*workdir, "output/info.log")
+	noticePath := filepath.Join(*workdir, "output/notice.log")
+	warnPath := filepath.Join(*workdir, "output/warn.log")
+	errorPath := filepath.Join(*workdir, "output/error.log")
+	fatalPath := filepath.Join(*workdir, "output/fatal.log")
+	printPath := filepath.Join(*workdir, "output/print.log")
+	/* Debug
+	fmt.Printf("...Engine tracePath=%s\n", tracePath)
+	fmt.Printf("...Engine debugPath=%s\n", debugPath)
+	fmt.Printf("...Engine infoPath=%s\n", infoPath)
+	fmt.Printf("...Engine noticePath=%s\n", noticePath)
+	fmt.Printf("...Engine warnPath=%s\n", warnPath)
+	fmt.Printf("...Engine errorPath=%s\n", errorPath)
+	fmt.Printf("...Engine fatalPath=%s\n", fatalPath)
+	fmt.Printf("...Engine printPath=%s\n", printPath)
+	*/
+
 	// グローバル変数の作成
 	g.G = *new(g.GlobalVariables)
 
 	// ロガーの作成。
 	// TODO ディレクトリが存在しなければ、強制終了します。
 	g.G.Log = *u.NewLogger(
-		filepath.Join(*workdir, "output/trace.log"),
-		filepath.Join(*workdir, "output/debug.log"),
-		filepath.Join(*workdir, "output/info.log"),
-		filepath.Join(*workdir, "output/notice.log"),
-		filepath.Join(*workdir, "output/warn.log"),
-		filepath.Join(*workdir, "output/error.log"),
-		filepath.Join(*workdir, "output/fatal.log"),
-		filepath.Join(*workdir, "output/print.log"))
+		tracePath,
+		debugPath,
+		infoPath,
+		noticePath,
+		warnPath,
+		errorPath,
+		fatalPath,
+		printPath)
 
 	// 既存のログ・ファイルを削除
-	err = g.G.Log.RemoveAllOldLogs()
-	if err != nil {
-		panic(g.G.Log.Fatal(fmt.Sprintf("...Engine... %s", err)))
-	}
+	g.G.Log.RemoveAllOldLogs()
 
 	// ログ・ファイルの開閉
 	err = g.G.Log.OpenAllLogs()
 	if err != nil {
-		panic(g.G.Log.Fatal(fmt.Sprintf("...Engine... %s", err)))
+		// ログ・ファイルを開くのに失敗したのだから、ログ・ファイルへは書き込めません
+		panic(fmt.Sprintf("...Engine... %s", err))
 	}
 	defer g.G.Log.CloseAllLogs()
 
