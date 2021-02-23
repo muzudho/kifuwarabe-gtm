@@ -52,7 +52,10 @@ func main() {
 	u.G.Log.RemoveAllOldLogs()
 
 	// ログ・ファイルの開閉
-	u.G.Log.OpenAllLogs()
+	err = u.G.Log.OpenAllLogs()
+	if err != nil {
+		panic(u.G.Log.Fatal(err.Error()))
+	}
 	defer u.G.Log.CloseAllLogs()
 
 	u.G.Log.Trace("...Engine Remove all old logs\n")
