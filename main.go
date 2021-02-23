@@ -50,12 +50,15 @@ func main() {
 		filepath.Join(*workdir, "output/print.log"))
 
 	// 既存のログ・ファイルを削除
-	g.G.Log.RemoveAllOldLogs()
+	err = g.G.Log.RemoveAllOldLogs()
+	if err != nil {
+		panic(g.G.Log.Fatal(fmt.Sprintf("...Engine... %s", err)))
+	}
 
 	// ログ・ファイルの開閉
 	err = g.G.Log.OpenAllLogs()
 	if err != nil {
-		panic(g.G.Log.Fatal(err.Error()))
+		panic(g.G.Log.Fatal(fmt.Sprintf("...Engine... %s", err)))
 	}
 	defer g.G.Log.CloseAllLogs()
 
@@ -75,7 +78,7 @@ func main() {
 	// TODO ファイルが存在しなければ、強制終了します。
 	config, err := ui.LoadEngineConf(engineConfPath)
 	if err != nil {
-		panic(g.G.Log.Fatal("path=[%s] err=[%s]", engineConfPath, err))
+		panic(g.G.Log.Fatal(fmt.Sprintf("...Engine... path=[%s] err=[%s]", engineConfPath, err)))
 	}
 
 	rand.Seed(time.Now().UnixNano())
@@ -171,7 +174,7 @@ MailLoop:
 				} else {
 					x, y, err := e.GetXYFromName(tokens[2])
 					if err != nil {
-						panic(g.G.Log.Fatal(err.Error()))
+						panic(g.G.Log.Fatal(fmt.Sprintf("...Engine... %s", err)))
 					}
 
 					tIdx = position.GetTIdxFromFileRank(x+1, y+1)

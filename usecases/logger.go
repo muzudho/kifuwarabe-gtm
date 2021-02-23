@@ -141,20 +141,56 @@ func (logger *Logger) openLogFile(filePath string) (*os.File, error) {
 }
 
 // FlushAllLogs - バッファーに溜まっている分をファイルに書き出します。定期的に行ってください
-func (logger *Logger) FlushAllLogs() {
-	logger.traceWriter.Flush()
-	logger.debugWriter.Flush()
-	logger.infoWriter.Flush()
-	logger.noticeWriter.Flush()
-	logger.warnWriter.Flush()
-	logger.errorWriter.Flush()
-	logger.fatalWriter.Flush()
-	logger.printWriter.Flush()
+func (logger *Logger) FlushAllLogs() error {
+	err := logger.traceWriter.Flush()
+	if err != nil {
+		return err
+	}
+
+	err = logger.debugWriter.Flush()
+	if err != nil {
+		return err
+	}
+
+	err = logger.infoWriter.Flush()
+	if err != nil {
+		return err
+	}
+
+	err = logger.noticeWriter.Flush()
+	if err != nil {
+		return err
+	}
+
+	err = logger.warnWriter.Flush()
+	if err != nil {
+		return err
+	}
+
+	err = logger.errorWriter.Flush()
+	if err != nil {
+		return err
+	}
+
+	err = logger.fatalWriter.Flush()
+	if err != nil {
+		return err
+	}
+
+	err = logger.printWriter.Flush()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // CloseAllLogs - 全てのログ・ファイルを閉じます
-func (logger *Logger) CloseAllLogs() {
-	logger.FlushAllLogs()
+func (logger *Logger) CloseAllLogs() error {
+	err := logger.FlushAllLogs()
+	if err != nil {
+		return err
+	}
 
 	defer logger.traceFile.Close()
 	defer logger.debugFile.Close()
@@ -164,27 +200,67 @@ func (logger *Logger) CloseAllLogs() {
 	defer logger.errorFile.Close()
 	defer logger.fatalFile.Close()
 	defer logger.printFile.Close()
+
+	return nil
 }
 
 // RemoveAllOldLogs - 既存のログファイルを削除します
 // 誤動作防止のため、 basename の末尾が '.log' か、または basename に '.log.' が含まれるものだけ削除できるものとします。
-func (logger *Logger) RemoveAllOldLogs() {
-	logger.removeLog(logger.tracePath)
-	logger.removeLog(logger.debugPath)
-	logger.removeLog(logger.infoPath)
-	logger.removeLog(logger.noticePath)
-	logger.removeLog(logger.warnPath)
-	logger.removeLog(logger.errorPath)
-	logger.removeLog(logger.fatalPath)
-	logger.removeLog(logger.printPath)
+func (logger *Logger) RemoveAllOldLogs() error {
+	err := logger.removeLog(logger.tracePath)
+	if err != nil {
+		return err
+	}
+
+	err = logger.removeLog(logger.debugPath)
+	if err != nil {
+		return err
+	}
+
+	err = logger.removeLog(logger.infoPath)
+	if err != nil {
+		return err
+	}
+
+	err = logger.removeLog(logger.noticePath)
+	if err != nil {
+		return err
+	}
+
+	err = logger.removeLog(logger.warnPath)
+	if err != nil {
+		return err
+	}
+
+	err = logger.removeLog(logger.errorPath)
+	if err != nil {
+		return err
+	}
+
+	err = logger.removeLog(logger.fatalPath)
+	if err != nil {
+		return err
+	}
+
+	err = logger.removeLog(logger.printPath)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // 誤動作防止のため、 basename の末尾が '.log' か、または basename に '.log.' が含まれるものだけ削除できるものとします。
-func (logger *Logger) removeLog(path string) {
+func (logger *Logger) removeLog(path string) error {
 	basename := filepath.Base(path)
 	if strings.HasSuffix(basename, ".log") || strings.Contains(basename, ".log.") {
-		os.Remove(path)
+		err := os.Remove(path)
+		if err != nil {
+			return err
+		}
 	}
+
+	return nil
 }
 
 // write - ログファイルに書き込みます
