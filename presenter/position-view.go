@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	e "github.com/muzudho/kifuwarabe-gtp/entities"
-	u "github.com/muzudho/kifuwarabe-gtp/usecases"
+	g "github.com/muzudho/kifuwarabe-gtp/global"
 )
 
 // labelOfColumns - 各列の表示符号。
@@ -23,7 +23,7 @@ var stoneLabels = [4]string{" .", " x", " o", " #"}
 
 // PrintBoardHeader - 手数などを表示
 func PrintBoardHeader(position *e.Position, movesNum int) {
-	u.G.StderrChat.Info("[ Ko=%s MovesNum=%d ]\n", (*position).GetNameFromTIdx(position.KoIdx), movesNum)
+	g.G.StderrChat.Info("[ Ko=%s MovesNum=%d ]\n", (*position).GetNameFromTIdx(position.KoIdx), movesNum)
 }
 
 // PrintBoard - 盤を描画
@@ -55,7 +55,7 @@ func PrintBoard(position *e.Position) {
 	}
 	b.WriteString("+\n")
 
-	u.G.StderrChat.Info(b.String())
+	g.G.StderrChat.Info(b.String())
 }
 
 // PrintSgf - SGF形式の棋譜表示

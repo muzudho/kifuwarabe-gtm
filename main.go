@@ -14,6 +14,7 @@ import (
 	"time"
 
 	e "github.com/muzudho/kifuwarabe-gtp/entities"
+	g "github.com/muzudho/kifuwarabe-gtp/global"
 	"github.com/muzudho/kifuwarabe-gtp/presenter"
 	p "github.com/muzudho/kifuwarabe-gtp/presenter"
 	"github.com/muzudho/kifuwarabe-gtp/ui"
@@ -34,11 +35,11 @@ func main() {
 	engineConfPath := filepath.Join(*workdir, "input/engine.conf.toml")
 
 	// グローバル変数の作成
-	u.G = *new(u.GlobalVariables)
+	g.G = *new(g.GlobalVariables)
 
 	// ロガーの作成。
 	// TODO ディレクトリが存在しなければ、強制終了します。
-	u.G.Log = *u.NewLogger(
+	g.G.Log = *u.NewLogger(
 		filepath.Join(*workdir, "output/trace.log"),
 		filepath.Join(*workdir, "output/debug.log"),
 		filepath.Join(*workdir, "output/info.log"),
@@ -49,85 +50,85 @@ func main() {
 		filepath.Join(*workdir, "output/print.log"))
 
 	// 既存のログ・ファイルを削除
-	u.G.Log.RemoveAllOldLogs()
+	g.G.Log.RemoveAllOldLogs()
 
 	// ログ・ファイルの開閉
-	err = u.G.Log.OpenAllLogs()
+	err = g.G.Log.OpenAllLogs()
 	if err != nil {
-		panic(u.G.Log.Fatal(err.Error()))
+		panic(g.G.Log.Fatal(err.Error()))
 	}
-	defer u.G.Log.CloseAllLogs()
+	defer g.G.Log.CloseAllLogs()
 
-	u.G.Log.Trace("...Engine Remove all old logs\n")
-	u.G.Log.Trace("...Engine KifuwarabeGoGo プログラム開始☆（＾～＾）\n")
-	u.G.Log.Trace("...Engine Author: %s\n", u.Author)
-	u.G.Log.Trace("...Engine This is a GTP engine.\n")
-	u.G.Log.Trace("...Engine wdir=%s\n", wdir)
-	u.G.Log.Trace("...Engine flag.Args()=%s\n", flag.Args())
-	u.G.Log.Trace("...Engine workdir=%s\n", *workdir)
-	u.G.Log.Trace("...Engine engineConfPath=%s\n", engineConfPath)
+	g.G.Log.Trace("...Engine Remove all old logs\n")
+	g.G.Log.Trace("...Engine KifuwarabeGoGo プログラム開始☆（＾～＾）\n")
+	g.G.Log.Trace("...Engine Author: %s\n", g.Author)
+	g.G.Log.Trace("...Engine This is a GTP engine.\n")
+	g.G.Log.Trace("...Engine wdir=%s\n", wdir)
+	g.G.Log.Trace("...Engine flag.Args()=%s\n", flag.Args())
+	g.G.Log.Trace("...Engine workdir=%s\n", *workdir)
+	g.G.Log.Trace("...Engine engineConfPath=%s\n", engineConfPath)
 
 	// チャッターの作成。 標準出力とロガーを一緒にしただけです。
-	u.G.Chat = *u.NewChatter(u.G.Log)
-	u.G.StderrChat = *u.NewStderrChatter(u.G.Log)
+	g.G.Chat = *u.NewChatter(g.G.Log)
+	g.G.StderrChat = *u.NewStderrChatter(g.G.Log)
 
 	// TODO ファイルが存在しなければ、強制終了します。
 	config, err := ui.LoadEngineConf(engineConfPath)
 	if err != nil {
-		panic(u.G.Log.Fatal("path=[%s] err=[%s]", engineConfPath, err))
+		panic(g.G.Log.Fatal("path=[%s] err=[%s]", engineConfPath, err))
 	}
 
 	rand.Seed(time.Now().UnixNano())
 
 	position := e.NewPosition(config.GetBoardArray(), config.BoardSize(), config.SentinelBoardMax(), config.Komi(), config.MaxMoves())
-	u.G.Log.Trace("...Engine position.BoardSize()=%d\n", position.BoardSize())
-	u.G.Log.Trace("...Engine position.SentinelBoardMax()=%d\n", position.SentinelBoardMax())
+	g.G.Log.Trace("...Engine position.BoardSize()=%d\n", position.BoardSize())
+	g.G.Log.Trace("...Engine position.SentinelBoardMax()=%d\n", position.SentinelBoardMax())
 	e.UctChildrenSize = config.BoardSize()*config.BoardSize() + 1
 
-	u.G.Log.Trace("...Engine 何か標準入力しろだぜ☆（＾～＾）\n")
+	g.G.Log.Trace("...Engine 何か標準入力しろだぜ☆（＾～＾）\n")
 
 	scanner := bufio.NewScanner(os.Stdin)
 
 MailLoop:
 	for scanner.Scan() {
-		u.G.Log.FlushAllLogs()
+		g.G.Log.FlushAllLogs()
 
 		command := scanner.Text()
-		u.G.Log.Notice("-->%s '%s' command\n", config.Profile.Name, command)
+		g.G.Log.Notice("-->%s '%s' command\n", config.Profile.Name, command)
 
 		tokens := strings.Split(command, " ")
 		switch tokens[0] {
 		case "boardsize":
-			u.G.Log.Notice("<--%s ok\n", config.Profile.Name)
-			u.G.Chat.Print("= \n\n")
+			g.G.Log.Notice("<--%s ok\n", config.Profile.Name)
+			g.G.Chat.Print("= \n\n")
 		case "clear_board":
 			position = e.NewPosition(config.GetBoardArray(), config.BoardSize(), config.SentinelBoardMax(), config.Komi(), config.MaxMoves())
-			u.G.Log.Notice("<--%s ok\n", config.Profile.Name)
-			u.G.Chat.Print("= \n\n")
+			g.G.Log.Notice("<--%s ok\n", config.Profile.Name)
+			g.G.Chat.Print("= \n\n")
 		case "quit":
-			u.G.Log.Notice("<--%s Quit\n", config.Profile.Name)
+			g.G.Log.Notice("<--%s Quit\n", config.Profile.Name)
 			break MailLoop
 			// os.Exit(0)
 		case "protocol_version":
-			u.G.Log.Notice("<--%s Version ok\n", config.Profile.Name)
-			u.G.Chat.Print("= 2\n\n")
+			g.G.Log.Notice("<--%s Version ok\n", config.Profile.Name)
+			g.G.Chat.Print("= 2\n\n")
 		case "name":
-			u.G.Log.Notice("<--%s Name ok\n", config.Profile.Name)
-			u.G.Chat.Print("= KwGoGo\n\n")
+			g.G.Log.Notice("<--%s Name ok\n", config.Profile.Name)
+			g.G.Chat.Print("= KwGoGo\n\n")
 		case "version":
-			u.G.Log.Notice("<--%s Version ok\n", config.Profile.Name)
-			u.G.Chat.Print("= 0.0.1\n\n")
+			g.G.Log.Notice("<--%s Version ok\n", config.Profile.Name)
+			g.G.Chat.Print("= 0.0.1\n\n")
 		case "list_commands":
-			u.G.Log.Notice("<--%s CommandList ok\n", config.Profile.Name)
-			u.G.Chat.Print("= boardsize\nclear_board\nquit\nprotocol_version\nundo\n" +
+			g.G.Log.Notice("<--%s CommandList ok\n", config.Profile.Name)
+			g.G.Chat.Print("= boardsize\nclear_board\nquit\nprotocol_version\nundo\n" +
 				"name\nversion\nlist_commands\nkomi\ngenmove\nplay\n\n")
 		case "komi":
-			u.G.Log.Notice("<--%s Komi ok\n", config.Profile.Name)
-			u.G.Chat.Print("= 6.5\n\n") // TODO コミ
+			g.G.Log.Notice("<--%s Komi ok\n", config.Profile.Name)
+			g.G.Chat.Print("= 6.5\n\n") // TODO コミ
 		case "undo":
 			u.UndoV9() // TODO アンドゥ
-			u.G.Log.Notice("<--%s Unimplemented undo, ignored\n", config.Profile.Name)
-			u.G.Chat.Print("= \n\n")
+			g.G.Log.Notice("<--%s Unimplemented undo, ignored\n", config.Profile.Name)
+			g.G.Chat.Print("= \n\n")
 		// 19路盤だと、すごい長い時間かかる。
 		// genmove b
 		case "genmove":
@@ -141,8 +142,8 @@ MailLoop:
 
 			bestmoveString := p.GetPointName(position, tIdx)
 
-			u.G.Log.Notice("<--%s [%s] ok\n", config.Profile.Name, bestmoveString)
-			u.G.Chat.Print("= %s\n\n", bestmoveString)
+			g.G.Log.Notice("<--%s [%s] ok\n", config.Profile.Name, bestmoveString)
+			g.G.Chat.Print("= %s\n\n", bestmoveString)
 		// play b a3
 		// play w d4
 		// play b d5
@@ -159,36 +160,36 @@ MailLoop:
 				color = 2
 			}
 
-			// u.G.Log.Trace("...Engine color=%d len(tokens)=%d\n", color, len(tokens))
+			// g.G.Log.Trace("...Engine color=%d len(tokens)=%d\n", color, len(tokens))
 
 			if 2 < len(tokens) {
-				// u.G.Log.Trace("...Engine tokens[2]=%s\n", tokens[2])
+				// g.G.Log.Trace("...Engine tokens[2]=%s\n", tokens[2])
 				var tIdx int
 				if strings.ToLower(tokens[2]) == "pass" {
 					tIdx = 0
-					// u.G.Log.Trace("...Engine pass\n")
+					// g.G.Log.Trace("...Engine pass\n")
 				} else {
 					x, y, err := e.GetXYFromName(tokens[2])
 					if err != nil {
-						panic(u.G.Log.Fatal(err.Error()))
+						panic(g.G.Log.Fatal(err.Error()))
 					}
 
 					tIdx = position.GetTIdxFromFileRank(x+1, y+1)
 
-					// u.G.Log.Trace("...Engine file=%d rank=%d\n", x+1, y+1)
+					// g.G.Log.Trace("...Engine file=%d rank=%d\n", x+1, y+1)
 				}
 				position.AddMoves(tIdx, color, 0)
 				presenter.PrintBoardHeader(position, position.MovesNum)
 				presenter.PrintBoard(position)
 
-				u.G.Log.Notice("<--%s ok\n", config.Profile.Name)
-				u.G.Chat.Print("= \n\n")
+				g.G.Log.Notice("<--%s ok\n", config.Profile.Name)
+				g.G.Chat.Print("= \n\n")
 			}
 		default:
-			u.G.Log.Notice("<--%s Unimplemented '%s' command\n", config.Profile.Name, tokens[0])
-			u.G.Chat.Print("? unknown_command\n\n")
+			g.G.Log.Notice("<--%s Unimplemented '%s' command\n", config.Profile.Name, tokens[0])
+			g.G.Chat.Print("? unknown_command\n\n")
 		}
 	}
 
-	u.G.Log.Trace("...%s... End engine\n", config.Profile.Name)
+	g.G.Log.Trace("...%s... End engine\n", config.Profile.Name)
 }
