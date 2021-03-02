@@ -109,7 +109,7 @@ func main() {
 
 	scanner := bufio.NewScanner(os.Stdin)
 
-MailLoop:
+MainLoop:
 	for scanner.Scan() {
 		g.G.Log.FlushAllLogs()
 
@@ -127,7 +127,7 @@ MailLoop:
 			g.G.Chat.Print("= \n\n")
 		case "quit":
 			g.G.Log.Notice("<--%s Quit\n", config.Profile.Name)
-			break MailLoop
+			break MainLoop
 			// os.Exit(0)
 		case "protocol_version":
 			g.G.Log.Notice("<--%s Version ok\n", config.Profile.Name)
@@ -212,4 +212,5 @@ MailLoop:
 	}
 
 	g.G.Log.Trace("...%s... End engine\n", config.Profile.Name)
+	g.G.Log.FlushAllLogs()
 }
