@@ -57,7 +57,7 @@ func main() {
 	*/
 
 	// グローバル変数の作成
-	g.G = *new(g.GlobalVariables)
+	g.G = *new(g.Variables)
 
 	// ロガーの作成。
 	// TODO ディレクトリが存在しなければ、強制終了します。

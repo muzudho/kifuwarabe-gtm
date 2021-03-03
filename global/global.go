@@ -9,8 +9,8 @@ const (
 	Author = "Satoshi Takahashi"
 )
 
-// GlobalVariables - グローバル変数。
-type GlobalVariables struct {
+// Variables - グローバル変数。
+type Variables struct {
 	// Log - ロガー。
 	Log l.Logger
 	// Chat - チャッター。 標準出力とロガーを一緒にしただけです。
@@ -20,4 +20,4 @@ type GlobalVariables struct {
 }
 
 // G - グローバル変数。思い切った名前。
-var G GlobalVariables
+var G Variables
