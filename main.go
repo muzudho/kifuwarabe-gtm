@@ -13,6 +13,7 @@ import (
 	"strings"
 	"time"
 
+	l "github.com/muzudho/go-logger"
 	e "github.com/muzudho/kifuwarabe-gtp/entities"
 	g "github.com/muzudho/kifuwarabe-gtp/global"
 	"github.com/muzudho/kifuwarabe-gtp/presenter"
@@ -23,15 +24,17 @@ import (
 
 func main() {
 	// Working directory
-	wdir, err := os.Getwd()
+	dwd, err := os.Getwd()
 	if err != nil {
 		// ここでは、ログはまだ設定できてない
-		panic(fmt.Sprintf("...Engine wdir=%s", wdir))
+		panic(fmt.Sprintf("...Engine DefaultWorkingDirectory=%s", dwd))
 	}
 
-	// コマンドライン引数
-	workdir := flag.String("workdir", wdir, "Working directory path.")
+	// コマンドライン引数登録
+	workdir := flag.String("workdir", dwd, "Working directory path.")
+	// 解析
 	flag.Parse()
+
 	engineConfPath := filepath.Join(*workdir, "input/engine.conf.toml")
 
 	tracePath := filepath.Join(*workdir, "output/trace.log")
@@ -58,7 +61,7 @@ func main() {
 
 	// ロガーの作成。
 	// TODO ディレクトリが存在しなければ、強制終了します。
-	g.G.Log = *u.NewLogger(
+	g.G.Log = *l.NewLogger(
 		tracePath,
 		debugPath,
 		infoPath,
@@ -83,14 +86,14 @@ func main() {
 	g.G.Log.Trace("...Engine KifuwarabeGoGo プログラム開始☆（＾～＾）\n")
 	g.G.Log.Trace("...Engine Author: %s\n", g.Author)
 	g.G.Log.Trace("...Engine This is a GTP engine.\n")
-	g.G.Log.Trace("...Engine wdir=%s\n", wdir)
+	g.G.Log.Trace("...Engine DefaultWorkingDirectory=%s\n", dwd)
 	g.G.Log.Trace("...Engine flag.Args()=%s\n", flag.Args())
 	g.G.Log.Trace("...Engine workdir=%s\n", *workdir)
 	g.G.Log.Trace("...Engine engineConfPath=%s\n", engineConfPath)
 
 	// チャッターの作成。 標準出力とロガーを一緒にしただけです。
-	g.G.Chat = *u.NewChatter(g.G.Log)
-	g.G.StderrChat = *u.NewStderrChatter(g.G.Log)
+	g.G.Chat = *l.NewChatter(g.G.Log)
+	g.G.StderrChat = *l.NewStderrChatter(g.G.Log)
 
 	// TODO ファイルが存在しなければ、強制終了します。
 	config, err := ui.LoadEngineConf(engineConfPath)

@@ -1,6 +1,8 @@
 package global
 
-import u "github.com/muzudho/kifuwarabe-gtp/usecases"
+import (
+	l "github.com/muzudho/go-logger"
+)
 
 const (
 	// Author - 囲碁思考エンジンの作者名だぜ☆（＾～＾）
@@ -10,11 +12,11 @@ const (
 // GlobalVariables - グローバル変数。
 type GlobalVariables struct {
 	// Log - ロガー。
-	Log u.Logger
+	Log l.Logger
 	// Chat - チャッター。 標準出力とロガーを一緒にしただけです。
-	Chat u.Chatter
+	Chat l.Chatter
 	// StderrChat - チャッター。 標準エラー出力とロガーを一緒にしただけです。
-	StderrChat u.StderrChatter
+	StderrChat l.StderrChatter
 }
 
 // G - グローバル変数。思い切った名前。
