@@ -3,12 +3,12 @@ package ui
 import (
 	"io/ioutil"
 
-	e "github.com/muzudho/kifuwarabe-gtp/entities"
+	be "github.com/muzudho/kifuwarabe-go-base/entities"
 	"github.com/pelletier/go-toml"
 )
 
 // LoadEngineConf - ゲーム設定ファイルを読み込みます。
-func LoadEngineConf(path string) (*e.EngineConf, error) {
+func LoadEngineConf(path string) (*be.EngineConf, error) {
 
 	// ファイル読込
 	fileData, err := ioutil.ReadFile(path)
@@ -20,7 +20,7 @@ func LoadEngineConf(path string) (*e.EngineConf, error) {
 
 	// Toml解析
 	binary := []byte(string(fileData))
-	config := &e.EngineConf{}
+	config := &be.EngineConf{}
 	toml.Unmarshal(binary, config)
 
 	return config, nil

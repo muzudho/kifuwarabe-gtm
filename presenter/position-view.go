@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	e "github.com/muzudho/kifuwarabe-gtp/entities"
+	be "github.com/muzudho/kifuwarabe-go-base/entities"
 	g "github.com/muzudho/kifuwarabe-gtp/global"
 )
 
@@ -22,12 +22,12 @@ var labelOfRows = [20]string{" 0", " 1", " 2", " 3", " 4", " 5", " 6", " 7", " 8
 var stoneLabels = [4]string{" .", " x", " o", " #"}
 
 // PrintBoardHeader - 手数などを表示
-func PrintBoardHeader(position *e.Position, movesNum int) {
+func PrintBoardHeader(position *be.Position, movesNum int) {
 	g.G.StderrChat.Info("[ Ko=%s MovesNum=%d ]\n", (*position).GetNameFromTIdx(position.KoIdx), movesNum)
 }
 
 // PrintBoard - 盤を描画
-func PrintBoard(position *e.Position) {
+func PrintBoard(position *be.Position) {
 	boardSize := (*position).BoardSize()
 
 	var b strings.Builder
@@ -59,7 +59,7 @@ func PrintBoard(position *e.Position) {
 }
 
 // PrintSgf - SGF形式の棋譜表示
-func PrintSgf(position *e.Position, movesNum int, record []int) {
+func PrintSgf(position *be.Position, movesNum int, record []int) {
 	boardSize := position.BoardSize()
 
 	fmt.Printf("(;GM[1]SZ[%d]KM[%.1f]PB[]PW[]\n", boardSize, position.Komi())
@@ -82,7 +82,7 @@ func PrintSgf(position *e.Position, movesNum int, record []int) {
 }
 
 // GetPointName - YX座標の文字表示？ A1 とか
-func GetPointName(position *e.Position, tIdx int) string {
+func GetPointName(position *be.Position, tIdx int) string {
 	if tIdx == 0 {
 		return "pass"
 	}

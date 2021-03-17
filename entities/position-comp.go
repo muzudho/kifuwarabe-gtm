@@ -5,7 +5,8 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/muzudho/kifuwarabe-gtp/entities/stone"
+	be "github.com/muzudho/kifuwarabe-go-base/entities"
+	"github.com/muzudho/kifuwarabe-go-base/entities/stone"
 )
 
 // AllPlayouts - プレイアウトした回数
@@ -15,7 +16,7 @@ var AllPlayouts int
 var UctChildrenSize int
 
 // Playout - 最後まで石を打ちます。得点を返します。
-func (position *Position) Playout(turnColor int, printBoard func(*Position)) int {
+func Playout(position *be.Position, turnColor int, printBoard func(*be.Position)) int {
 	boardSize := (*position).BoardSize()
 
 	color := turnColor
@@ -45,7 +46,7 @@ func (position *Position) Playout(turnColor int, printBoard func(*Position)) int
 				r = rand.Intn(emptyNum)
 				tIdx = empty[r]
 			}
-			err := (*position).PutStone(tIdx, color, DoNotFillEye)
+			err := (*position).PutStone(tIdx, color, be.DoNotFillEye)
 			if err == 0 {
 				break
 			}
@@ -61,10 +62,10 @@ func (position *Position) Playout(turnColor int, printBoard func(*Position)) int
 		// 	loop, e.GetNameFromXY(tIdx), color, emptyNum, e.GetNameFromXY(position.KoIdx()))
 		color = stone.FlipColor(color)
 	}
-	return position.countScore(turnColor)
+	return countScore(position, turnColor)
 }
 
-func (position *Position) countScore(turnColor int) int {
+func countScore(position *be.Position, turnColor int) int {
 	var mk = [4]int{}
 	var kind = [3]int{0, 0, 0}
 	var score, blackArea, whiteArea, blackSum, whiteSum int
@@ -109,7 +110,7 @@ func (position *Position) countScore(turnColor int) int {
 }
 
 // PrimitiveMonteCalro - モンテカルロ木探索 Version 9a.
-func (position *Position) PrimitiveMonteCalro(color int, printBoard func(*Position)) int {
+func PrimitiveMonteCalro(position *be.Position, color int, printBoard func(*be.Position)) int {
 	boardSize := (*position).BoardSize()
 
 	// ９路盤なら
@@ -128,7 +129,7 @@ func (position *Position) PrimitiveMonteCalro(color int, printBoard func(*Positi
 			if (*position).Exists(tIdx) {
 				continue
 			}
-			err := (*position).PutStone(tIdx, color, DoNotFillEye)
+			err := (*position).PutStone(tIdx, color, be.DoNotFillEye)
 			if err != 0 {
 				continue
 			}
@@ -138,7 +139,7 @@ func (position *Position) PrimitiveMonteCalro(color int, printBoard func(*Positi
 				var boardCopy2 = (*position).CopyData()
 				koZCopy2 := position.KoIdx
 
-				win := -position.Playout(stone.FlipColor(color), printBoard)
+				win := -Playout(position, stone.FlipColor(color), printBoard)
 
 				winSum += win
 				position.KoIdx = koZCopy2
@@ -158,11 +159,11 @@ func (position *Position) PrimitiveMonteCalro(color int, printBoard func(*Positi
 }
 
 // GetComputerMove - コンピューターの指し手。
-func GetComputerMove(position *Position, color int, fUCT int, printBoard func(*Position)) int {
+func GetComputerMove(position *be.Position, color int, fUCT int, printBoard func(*be.Position)) int {
 	var tIdx int
 	start := time.Now()
 	AllPlayouts = 0
-	tIdx = position.PrimitiveMonteCalro(color, printBoard)
+	tIdx = PrimitiveMonteCalro(position, color, printBoard)
 	sec := time.Since(start).Seconds()
 	fmt.Printf("(GetComputerMove) %.1f sec, %.0f playout/sec, play=%s,moves=%d,color=%d,playouts=%d,fUCT=%d\n",
 		sec, float64(AllPlayouts)/sec, (*position).GetNameFromTIdx(tIdx), position.MovesNum, color, AllPlayouts, fUCT)
