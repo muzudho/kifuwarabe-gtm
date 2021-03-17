@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	be "github.com/muzudho/kifuwarabe-go-base/entities"
-	g "github.com/muzudho/kifuwarabe-gtp/global"
 )
 
 // labelOfColumns - 各列の表示符号。
@@ -21,13 +20,13 @@ var labelOfRows = [20]string{" 0", " 1", " 2", " 3", " 4", " 5", " 6", " 7", " 8
 // " ○" - Visual Studio Code の 全角半角崩れ対応。
 var stoneLabels = [4]string{" .", " x", " o", " #"}
 
-// PrintBoardHeader - 手数などを表示
-func PrintBoardHeader(position *be.Position, movesNum int) {
-	g.G.StderrChat.Info("[ Ko=%s MovesNum=%d ]\n", (*position).GetNameFromTIdx(position.KoIdx), movesNum)
+// CreateBoardHeader - 手数などを表示
+func CreateBoardHeader(position *be.Position, movesNum int) string {
+	return fmt.Sprintf("[ Ko=%s MovesNum=%d ]\n", (*position).GetNameFromTIdx(position.KoIdx), movesNum)
 }
 
-// PrintBoard - 盤を描画
-func PrintBoard(position *be.Position) {
+// CreateBoardString - 盤を描画
+func CreateBoardString(position *be.Position) string {
 	boardSize := (*position).BoardSize()
 
 	var b strings.Builder
@@ -55,7 +54,7 @@ func PrintBoard(position *be.Position) {
 	}
 	b.WriteString("+\n")
 
-	g.G.StderrChat.Info(b.String())
+	return b.String()
 }
 
 // PrintSgf - SGF形式の棋譜表示

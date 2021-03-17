@@ -15,7 +15,7 @@ import (
 
 	l "github.com/muzudho/go-logger"
 	be "github.com/muzudho/kifuwarabe-go-base/entities"
-	e "github.com/muzudho/kifuwarabe-gtp/entities"
+	tbe "github.com/muzudho/kifuwarabe-go-think-base/entities"
 	g "github.com/muzudho/kifuwarabe-gtp/global"
 	"github.com/muzudho/kifuwarabe-gtp/presenter"
 	p "github.com/muzudho/kifuwarabe-gtp/presenter"
@@ -107,7 +107,7 @@ func main() {
 	position := be.NewPosition(config.GetBoardArray(), config.BoardSize(), config.SentinelBoardMax(), config.Komi(), config.MaxMoves())
 	g.G.Log.Trace("...Engine position.BoardSize()=%d\n", position.BoardSize())
 	g.G.Log.Trace("...Engine position.SentinelBoardMax()=%d\n", position.SentinelBoardMax())
-	e.UctChildrenSize = config.BoardSize()*config.BoardSize() + 1
+	tbe.UctChildrenSize = config.BoardSize()*config.BoardSize() + 1
 
 	g.G.Log.Trace("...Engine 何か標準入力しろだぜ☆（＾～＾）\n")
 
@@ -160,9 +160,9 @@ MainLoop:
 			if 1 < len(tokens) && strings.ToLower(tokens[1]) == "w" {
 				color = 2
 			}
-			tIdx := u.PlayComputerMove(position, color, 1, presenter.PrintBoard)
-			presenter.PrintBoardHeader(position, position.MovesNum)
-			presenter.PrintBoard(position)
+			tIdx := u.PlayComputerMove(position, color, 1, presenter.CreateBoardString)
+			g.G.StderrChat.Info(presenter.CreateBoardHeader(position, position.MovesNum))
+			g.G.StderrChat.Info(presenter.CreateBoardString(position))
 
 			bestmoveString := p.GetPointName(position, tIdx)
 
@@ -203,8 +203,8 @@ MainLoop:
 					// g.G.Log.Trace("...Engine file=%d rank=%d\n", x+1, y+1)
 				}
 				position.AddMoves(tIdx, color, 0)
-				presenter.PrintBoardHeader(position, position.MovesNum)
-				presenter.PrintBoard(position)
+				g.G.StderrChat.Info(presenter.CreateBoardHeader(position, position.MovesNum))
+				g.G.StderrChat.Info(presenter.CreateBoardString(position))
 
 				g.G.Log.Notice("<--%s ok\n", config.Profile.Name)
 				g.G.Chat.Print("= \n\n")
