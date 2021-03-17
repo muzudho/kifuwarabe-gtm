@@ -16,9 +16,8 @@ import (
 	l "github.com/muzudho/go-logger"
 	be "github.com/muzudho/kifuwarabe-go-base/entities"
 	tbe "github.com/muzudho/kifuwarabe-go-think-base/entities"
+	p "github.com/muzudho/kifuwarabe-go-view-base/presenter"
 	g "github.com/muzudho/kifuwarabe-gtp/global"
-	"github.com/muzudho/kifuwarabe-gtp/presenter"
-	p "github.com/muzudho/kifuwarabe-gtp/presenter"
 	"github.com/muzudho/kifuwarabe-gtp/ui"
 	u "github.com/muzudho/kifuwarabe-gtp/usecases"
 )
@@ -160,9 +159,9 @@ MainLoop:
 			if 1 < len(tokens) && strings.ToLower(tokens[1]) == "w" {
 				color = 2
 			}
-			tIdx := u.PlayComputerMove(position, color, 1, presenter.CreateBoardString)
-			g.G.StderrChat.Info(presenter.CreateBoardHeader(position, position.MovesNum))
-			g.G.StderrChat.Info(presenter.CreateBoardString(position))
+			tIdx := u.PlayComputerMove(position, color, 1, p.CreateBoardString)
+			g.G.StderrChat.Info(p.CreateBoardHeader(position, position.MovesNum))
+			g.G.StderrChat.Info(p.CreateBoardString(position))
 
 			bestmoveString := p.GetPointName(position, tIdx)
 
@@ -203,8 +202,8 @@ MainLoop:
 					// g.G.Log.Trace("...Engine file=%d rank=%d\n", x+1, y+1)
 				}
 				position.AddMoves(tIdx, color, 0)
-				g.G.StderrChat.Info(presenter.CreateBoardHeader(position, position.MovesNum))
-				g.G.StderrChat.Info(presenter.CreateBoardString(position))
+				g.G.StderrChat.Info(p.CreateBoardHeader(position, position.MovesNum))
+				g.G.StderrChat.Info(p.CreateBoardString(position))
 
 				g.G.Log.Notice("<--%s ok\n", config.Profile.Name)
 				g.G.Chat.Print("= \n\n")
